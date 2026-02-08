@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>CM Card</title>
 
 <!-- PWA -->
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f9d58">
+<meta name="theme-color" content="#0a3d62">
 
 <!-- iOS -->
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-title" content="CM Card">
 
 <!-- ICONOS -->
-<link rel="apple-touch-icon" href="apple-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-icon.png">
 <link rel="icon" type="image/png" href="apple-icon.png">
 
 <style>
@@ -68,15 +68,14 @@ h1{
   background:linear-gradient(135deg,var(--card1),var(--card2));
   color:white;
   box-shadow:0 25px 40px rgba(0,0,0,.35);
-  transition:.3s;
 }
 
-.card:active{
-  transform:scale(.96);
+.card.active{
+  outline:3px solid rgba(255,255,255,.8);
 }
 
 .card img{
-  width:80px;
+  width:90px;
   margin-bottom:15px;
 }
 
@@ -88,10 +87,9 @@ h1{
 .footer{
   display:flex;
   justify-content:space-between;
-  margin-top:12px;
 }
 
-/* MODAL */
+/* MODALS */
 .modal{
   position:fixed;
   inset:0;
@@ -99,7 +97,6 @@ h1{
   display:none;
   align-items:center;
   justify-content:center;
-  z-index:10;
 }
 
 .modal-content{
@@ -109,7 +106,6 @@ h1{
   width:90%;
 }
 
-/* INPUTS */
 input,select{
   width:100%;
   padding:10px;
@@ -120,7 +116,6 @@ input,select{
   color:var(--text);
 }
 
-/* BUTTONS */
 button{
   padding:12px;
   width:100%;
@@ -140,65 +135,8 @@ button{
   right:0;
   background:var(--bg);
   display:flex;
-  justify-content:space-around;
+  gap:10px;
   padding:15px;
-  box-shadow:0 -10px 30px rgba(0,0,0,.25);
-}
-
-.action-btn{
-  background:#000;
-  font-size:20px;
-}
-
-/* SETTINGS */
-.setting-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin:15px 0;
-}
-
-.ios-switch{
-  position:relative;
-  width:50px;
-  height:30px;
-}
-
-.ios-switch input{ display:none; }
-
-.slider{
-  position:absolute;
-  inset:0;
-  background:#ccc;
-  border-radius:30px;
-  transition:.3s;
-}
-
-.slider::before{
-  content:"";
-  position:absolute;
-  width:24px;
-  height:24px;
-  left:3px;
-  top:3px;
-  background:white;
-  border-radius:50%;
-  transition:.3s;
-}
-
-.ios-switch input:checked + .slider{
-  background:#34c759;
-}
-
-.ios-switch input:checked + .slider::before{
-  transform:translateX(20px);
-}
-
-.company{
-  text-align:center;
-  font-size:13px;
-  opacity:.6;
-  margin-top:20px;
 }
 </style>
 </head>
@@ -213,16 +151,16 @@ button{
 <div id="cards"></div>
 
 <div class="bottom">
-  <button onclick="openAdd()">➕</button>
-  <button class="action-btn" onclick="openActions()">⚡</button>
-  <button onclick="openSettings()">⚙️</button>
+  <button onclick="openModal()">➕ Agregar</button>
+  <button onclick="openActions()">⚡ Acciones</button>
+  <button onclick="openSettings()">⚙️ Ajustes</button>
 </div>
 
 <!-- MODAL AGREGAR -->
-<div class="modal" id="addModal">
+<div class="modal" id="modal">
   <div class="modal-content">
     <input id="name" placeholder="Nombre">
-    <input id="number" maxlength="16" placeholder="Número de tarjeta">
+    <input id="number" maxlength="16" placeholder="Tarjeta (16 dígitos)">
     <input id="date" maxlength="5" placeholder="MM/YY">
     <input id="pin" type="password" placeholder="PIN">
     <select id="currency">
@@ -232,118 +170,82 @@ button{
     </select>
     <input id="phone" placeholder="+53 5XXXXXXX">
     <button onclick="saveCard()">Guardar</button>
-    <button onclick="closeAdd()">Cerrar</button>
+    <button onclick="closeModal()">Cerrar</button>
   </div>
 </div>
 
 <!-- MODAL ACCIONES -->
 <div class="modal" id="actionsModal">
   <div class="modal-content">
-    <button onclick="authenticate()">Autenticarse</button>
+    <h3>Acciones</h3>
+    <button onclick="openAuth()">🔐 Autenticarse</button>
     <button onclick="closeActions()">Cerrar</button>
   </div>
 </div>
 
-<!-- MODAL TARJETA -->
-<div class="modal" id="cardModal">
+<!-- MODAL AUTENTICAR -->
+<div class="modal" id="authModal">
   <div class="modal-content">
-    <button onclick="deleteCard()">Eliminar tarjeta</button>
-    <button onclick="closeCard()">Cerrar</button>
-  </div>
-</div>
-
-<!-- MODAL AJUSTES -->
-<div class="modal" id="settingsModal">
-  <div class="modal-content">
-    <div class="setting-row">
-      <span>Modo oscuro</span>
-      <label class="ios-switch">
-        <input type="checkbox" id="darkSwitch">
-        <span class="slider"></span>
-      </label>
-    </div>
-    <div class="company">CM Company</div>
-    <button onclick="closeSettings()">Cerrar</button>
+    <h3>Autenticarse</h3>
+    <input type="password" id="authPin" placeholder="PIN de la tarjeta">
+    <button onclick="authenticate()">Aceptar</button>
+    <button onclick="closeAuth()">Cancelar</button>
   </div>
 </div>
 
 <script>
-let selectedIndex=null;
-
-/* ===== MODO OSCURO ===== */
 let dark = localStorage.getItem("darkMode")==="true";
+let activeCard = null;
 
-function applyTheme(){
-  document.body.classList.toggle("dark",dark);
-  document.querySelector(".toggle").textContent = dark ? "☀️" : "🌙";
-  darkSwitch.checked = dark;
+if(dark){
+  document.body.classList.add("dark");
+  document.querySelector(".toggle").textContent="☀️";
 }
-
-applyTheme();
 
 function toggleTheme(){
   dark=!dark;
+  document.body.classList.toggle("dark",dark);
+  document.querySelector(".toggle").textContent = dark ? "☀️" : "🌙";
   localStorage.setItem("darkMode",dark);
-  applyTheme();
 }
 
-darkSwitch.onchange = toggleTheme;
-
-/* ===== MODALES ===== */
-function openAdd(){ addModal.style.display="flex"; }
-function closeAdd(){ addModal.style.display="none"; }
+function openModal(){ modal.style.display="flex"; }
+function closeModal(){ modal.style.display="none"; }
 
 function openActions(){ actionsModal.style.display="flex"; }
 function closeActions(){ actionsModal.style.display="none"; }
 
-function openSettings(){ settingsModal.style.display="flex"; }
-function closeSettings(){ settingsModal.style.display="none"; }
-
-function openCard(i){
-  selectedIndex=i;
-  cardModal.style.display="flex";
+function openAuth(){
+  actionsModal.style.display="none";
+  authModal.style.display="flex";
 }
-function closeCard(){ cardModal.style.display="none"; }
+function closeAuth(){ authModal.style.display="none"; }
 
-/* ===== TARJETAS ===== */
+function maskCard(n){
+  return "**** **** **** " + n.slice(-4);
+}
+
 function saveCard(){
   const card={
     name:name.value || "Tarjeta",
     number:number.value,
-    date:date.value,
-    pin:pin.value,
-    currency:currency.value,
-    phone:phone.value
+    date:date.value
   };
-
-  const data=JSON.parse(localStorage.getItem("cards")||"[]");
-  data.push(card);
-  localStorage.setItem("cards",JSON.stringify(data));
+  const cards=JSON.parse(localStorage.getItem("cards")||"[]");
+  cards.push(card);
+  localStorage.setItem("cards",JSON.stringify(cards));
   render();
-  closeAdd();
-}
-
-function deleteCard(){
-  const data=JSON.parse(localStorage.getItem("cards")||"[]");
-  data.splice(selectedIndex,1);
-  localStorage.setItem("cards",JSON.stringify(data));
-  closeCard();
-  render();
-}
-
-function mask(num){
-  return "**** **** **** " + num.slice(-4);
+  closeModal();
 }
 
 function render(){
   cards.innerHTML="";
   const data=JSON.parse(localStorage.getItem("cards")||"[]");
-
   data.forEach((c,i)=>{
     cards.innerHTML+=`
-      <div class="card" onclick="openCard(${i})">
+      <div class="card ${activeCard===i?'active':''}" onclick="selectCard(${i})">
         <img src="logo.png">
-        <div class="number">${mask(c.number)}</div>
+        <div class="number">${maskCard(c.number)}</div>
         <div class="footer">
           <span>${c.name}</span>
           <span>${c.date}</span>
@@ -352,22 +254,36 @@ function render(){
   });
 }
 
-/* ===== ACCIÓN USSD ===== */
-function authenticate(){
-  const data=JSON.parse(localStorage.getItem("cards")||"[]");
-  if(!data.length) return alert("No hay tarjetas");
-  const ussd=`*133*40*03*${data[0].number}#`;
-  window.location.href="tel:"+ussd;
+function selectCard(i){
+  activeCard = i;
+  render();
+  if(confirm("¿Eliminar tarjeta?")){
+    const d=JSON.parse(localStorage.getItem("cards"));
+    d.splice(i,1);
+    localStorage.setItem("cards",JSON.stringify(d));
+    activeCard=null;
+    render();
+  }
 }
 
-/* ===== FECHA MM/YY ===== */
-date.addEventListener("input",()=>{
-  let v=date.value.replace(/\D/g,"").slice(0,4);
-  if(v.length>=3) v=v.slice(0,2)+"/"+v.slice(2);
-  date.value=v;
-});
+function authenticate(){
+  if(activeCard===null){
+    alert("Selecciona una tarjeta primero");
+    return;
+  }
+  authModal.style.display="none";
+  window.location.href="tel:*444*40*03#";
+}
 
 render();
+
+/* FORMATO FECHA */
+date.addEventListener("input",()=>{
+  let v=date.value.replace(/\D/g,"");
+  if(v.length>4)v=v.slice(0,4);
+  if(v.length>=3)v=v.slice(0,2)+"/"+v.slice(2);
+  date.value=v;
+});
 </script>
 
 </body>
