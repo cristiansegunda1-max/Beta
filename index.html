@@ -271,7 +271,12 @@ if (dateInput) {
 }
 </script>
   <!-- MODAL AJUSTES -->
-<div class="modal" id="settingsModal">
+<script>
+function openSettings(){
+  document.getElementById("settingsModal").style.display = "flex";
+}
+  
+  <div class="modal" id="settingsModal">
   <div class="modal-content">
 
     <h3>Ajustes</h3>
@@ -289,7 +294,10 @@ if (dateInput) {
     </div>
 
     <button onclick="closeSettings()">Cerrar</button>
-
+function closeSettings(){
+  document.getElementById("settingsModal").style.display = "none";
+}
+</script>
   </div>
 </div>
 
