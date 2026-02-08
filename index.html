@@ -249,6 +249,26 @@ function openSettings(){
 }
 
 render();
+// ===============================
+// FIX FECHA VENCIMIENTO MM/YY
+// ===============================
+const dateInput = document.getElementById("date");
+
+if (dateInput) {
+  dateInput.addEventListener("input", function () {
+    let value = dateInput.value.replace(/\D/g, "");
+
+    if (value.length > 4) {
+      value = value.slice(0, 4);
+    }
+
+    if (value.length >= 3) {
+      value = value.slice(0, 2) + "/" + value.slice(2);
+    }
+
+    dateInput.value = value;
+  });
+}
 </script>
 
 </body>
