@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>CM Card</title>
 
 <!-- PWA -->
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f9d58">
+<meta name="theme-color" content="#0a3d62">
 
-<!-- iOS -->
+<!-- iOS PWA -->
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CM Card">
-<link rel="apple-touch-icon" href="apple-icon.png">
-<link rel="icon" href="apple-icon.png">
+
+<!-- ICONOS -->
+<link rel="apple-touch-icon" sizes="180x180" href="apple-icon.png">
+<link rel="icon" type="image/png" href="apple-icon.png">
 
 <style>
 :root{
@@ -24,14 +26,16 @@
   --card2:#0b7a44;
   --border:#ccc;
 }
+
 body.dark{
   --bg:#0f0f12;
   --text:#fff;
   --border:#333;
 }
+
 body{
   margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont;
   background:var(--bg);
   color:var(--text);
   transition:.3s;
@@ -44,10 +48,13 @@ header{
   justify-content:space-between;
   align-items:center;
 }
+
 h1{
-  font-size:32px;
+  font-size:28px;
   font-weight:700;
+  letter-spacing:-0.5px;
 }
+
 .toggle{
   font-size:24px;
   cursor:pointer;
@@ -61,17 +68,28 @@ h1{
   border-radius:22px;
   background:linear-gradient(135deg,var(--card1),var(--card2));
   color:white;
-  box-shadow:0 20px 35px rgba(0,0,0,.25);
+  box-shadow:0 25px 40px rgba(0,0,0,.35);
+  transition:.3s;
 }
+
+.card:hover{
+  transform:scale(1.03);
+}
+
+.card img{
+  width:90px;
+  margin-bottom:20px;
+}
+
 .number{
   font-size:22px;
   letter-spacing:3px;
-  margin:10px 0;
 }
+
 .footer{
   display:flex;
   justify-content:space-between;
-  opacity:.9;
+  margin-top:15px;
 }
 
 /* MODAL */
@@ -83,13 +101,15 @@ h1{
   align-items:center;
   justify-content:center;
 }
+
 .modal-content{
   background:var(--bg);
   padding:20px;
-  border-radius:18px;
+  border-radius:20px;
   width:90%;
 }
-input{
+
+input,select{
   width:100%;
   padding:10px;
   margin:6px 0;
@@ -98,6 +118,7 @@ input{
   background:transparent;
   color:var(--text);
 }
+
 button{
   padding:12px;
   width:100%;
@@ -109,14 +130,18 @@ button{
   font-size:16px;
 }
 
-/* BOTTOM */
+/* BOTTOM BAR */
 .bottom{
   position:fixed;
   bottom:0;
   left:0;
   right:0;
   background:var(--bg);
+  display:flex;
+  gap:10px;
+  justify-content:space-around;
   padding:15px;
+  box-shadow:0 -10px 30px rgba(0,0,0,.25);
 }
 </style>
 </head>
@@ -125,62 +150,81 @@ button{
 
 <header>
   <h1>CM Card</h1>
-  <div class="toggle" id="themeBtn">🌙</div>
+  <div class="toggle" onclick="toggleTheme()">🌙</div>
 </header>
 
 <div id="cards"></div>
 
 <div class="bottom">
   <button onclick="openModal()">➕ Agregar</button>
+  <button onclick="openSettings()">⚙️ Ajustes</button> <!-- AÑADIDO -->
 </div>
 
+<!-- MODAL -->
 <div class="modal" id="modal">
   <div class="modal-content">
     <input id="name" placeholder="Nombre">
     <input id="number" maxlength="16" placeholder="Tarjeta (16 dígitos)">
-    <input id="date" placeholder="YY/MM">
+    <input id="date" maxlength="5" placeholder="YY/MM">
+    <input id="pin" type="password" placeholder="PIN">
+    <select id="currency">
+      <option>USD</option>
+      <option>CUP</option>
+      <option>MLC</option>
+    </select>
+    <input id="phone" placeholder="+53 5XXXXXXX">
     <button onclick="saveCard()">Guardar</button>
     <button onclick="closeModal()">Cerrar</button>
   </div>
 </div>
 
 <script>
-const body=document.body;
-const modal=document.getElementById("modal");
-const cardsDiv=document.getElementById("cards");
-const themeBtn=document.getElementById("themeBtn");
+let dark = false;
 
-themeBtn.onclick=()=>{
-  body.classList.toggle("dark");
-  themeBtn.textContent=body.classList.contains("dark")?"☀️":"🌙";
-};
+// FIX: Persistencia modo oscuro
+dark = localStorage.getItem("darkMode")==="true";
+if(dark){
+  document.body.classList.add("dark");
+  document.querySelector(".toggle").textContent="☀️";
+}
+
+function toggleTheme(){
+  dark=!dark;
+  document.body.classList.toggle("dark",dark);
+  document.querySelector(".toggle").textContent = dark ? "☀️" : "🌙";
+  localStorage.setItem("darkMode",dark);
+}
 
 function openModal(){ modal.style.display="flex"; }
 function closeModal(){ modal.style.display="none"; }
 
-function formatNumber(n){
-  return n.replace(/(.{4})/g,"$1 ").trim();
-}
-
+// FIX + MEJORA: guardar todos los datos sin undefined
 function saveCard(){
   const card={
-    name:document.getElementById("name").value||"Sin nombre",
-    number:formatNumber(document.getElementById("number").value),
-    date:document.getElementById("date").value||"--/--"
+    name: name.value || "Tarjeta principal",
+    number: number.value || "0000000000000000",
+    date: date.value || "--/--",
+    pin: pin.value || "",
+    currency: currency.value,
+    phone: phone.value || ""
   };
-  const data=JSON.parse(localStorage.getItem("cards")||"[]");
-  data.push(card);
-  localStorage.setItem("cards",JSON.stringify(data));
+
+  const cards=JSON.parse(localStorage.getItem("cards")||"[]");
+  cards.push(card);
+  localStorage.setItem("cards",JSON.stringify(cards));
   render();
   closeModal();
 }
 
+// FIX: render estable + eliminar tarjeta
 function render(){
-  cardsDiv.innerHTML="";
+  cards.innerHTML="";
   const data=JSON.parse(localStorage.getItem("cards")||"[]");
+
   data.forEach((c,i)=>{
-    cardsDiv.innerHTML+=`
-      <div class="card" onclick="deleteCard(${i})">
+    cards.innerHTML+=`
+      <div class="card" onclick="removeCard(${i})">
+        <img src="logo.png">
         <div class="number">${c.number}</div>
         <div class="footer">
           <span>${c.name}</span>
@@ -190,12 +234,18 @@ function render(){
   });
 }
 
-function deleteCard(i){
-  if(!confirm("¿Eliminar tarjeta?"))return;
-  const data=JSON.parse(localStorage.getItem("cards"));
-  data.splice(i,1);
-  localStorage.setItem("cards",JSON.stringify(data));
-  render();
+function removeCard(index){
+  if(confirm("¿Eliminar esta tarjeta?")){
+    const data=JSON.parse(localStorage.getItem("cards"));
+    data.splice(index,1);
+    localStorage.setItem("cards",JSON.stringify(data));
+    render();
+  }
+}
+
+// AÑADIDO
+function openSettings(){
+  alert("Próximamente: seguridad, backup y preferencias");
 }
 
 render();
