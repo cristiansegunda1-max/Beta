@@ -52,7 +52,6 @@ header{
 h1{
   font-size:28px;
   font-weight:700;
-  letter-spacing:-0.5px;
 }
 
 .toggle{
@@ -92,7 +91,7 @@ h1{
   margin-top:15px;
 }
 
-/* MODAL */
+/* MODALS */
 .modal{
   position:fixed;
   inset:0;
@@ -100,6 +99,7 @@ h1{
   display:none;
   align-items:center;
   justify-content:center;
+  z-index:10;
 }
 
 .modal-content{
@@ -109,6 +109,7 @@ h1{
   width:90%;
 }
 
+/* INPUTS */
 input,select{
   width:100%;
   padding:10px;
@@ -119,6 +120,7 @@ input,select{
   color:var(--text);
 }
 
+/* BUTTONS */
 button{
   padding:12px;
   width:100%;
@@ -143,6 +145,60 @@ button{
   padding:15px;
   box-shadow:0 -10px 30px rgba(0,0,0,.25);
 }
+
+/* SETTINGS */
+.setting-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:15px 0;
+}
+
+/* iOS SWITCH */
+.ios-switch{
+  position:relative;
+  width:50px;
+  height:30px;
+}
+
+.ios-switch input{
+  display:none;
+}
+
+.slider{
+  position:absolute;
+  inset:0;
+  background:#ccc;
+  border-radius:30px;
+  transition:.3s;
+}
+
+.slider::before{
+  content:"";
+  position:absolute;
+  width:24px;
+  height:24px;
+  left:3px;
+  top:3px;
+  background:white;
+  border-radius:50%;
+  transition:.3s;
+}
+
+.ios-switch input:checked + .slider{
+  background:#34c759;
+}
+
+.ios-switch input:checked + .slider::before{
+  transform:translateX(20px);
+}
+
+.company{
+  text-align:center;
+  font-size:13px;
+  opacity:.6;
+  margin-top:20px;
+}
 </style>
 </head>
 
@@ -157,15 +213,15 @@ button{
 
 <div class="bottom">
   <button onclick="openModal()">➕ Agregar</button>
-  <button onclick="openSettings()">⚙️ Ajustes</button> <!-- AÑADIDO -->
+  <button onclick="openSettings()">⚙️ Ajustes</button>
 </div>
 
-<!-- MODAL -->
+<!-- MODAL AGREGAR TARJETA -->
 <div class="modal" id="modal">
   <div class="modal-content">
     <input id="name" placeholder="Nombre">
     <input id="number" maxlength="16" placeholder="Tarjeta (16 dígitos)">
-    <input id="date" maxlength="5" placeholder="YY/MM">
+    <input id="date" maxlength="5" placeholder="MM/YY">
     <input id="pin" type="password" placeholder="PIN">
     <select id="currency">
       <option>USD</option>
@@ -178,10 +234,29 @@ button{
   </div>
 </div>
 
-<script>
-let dark = false;
+<!-- MODAL AJUSTES -->
+<div class="modal" id="settingsModal">
+  <div class="modal-content">
+    <h3>Ajustes</h3>
 
-// FIX: Persistencia modo oscuro
+    <div class="setting-row">
+      <span>Modo oscuro</span>
+      <label class="ios-switch">
+        <input type="checkbox" id="darkSwitch">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="company">CM Company</div>
+
+    <button onclick="closeSettings()">Cerrar</button>
+  </div>
+</div>
+
+<script>
+let dark=false;
+
+// Persistencia modo oscuro
 dark = localStorage.getItem("darkMode")==="true";
 if(dark){
   document.body.classList.add("dark");
@@ -193,12 +268,27 @@ function toggleTheme(){
   document.body.classList.toggle("dark",dark);
   document.querySelector(".toggle").textContent = dark ? "☀️" : "🌙";
   localStorage.setItem("darkMode",dark);
+  darkSwitch.checked = dark;
 }
 
 function openModal(){ modal.style.display="flex"; }
 function closeModal(){ modal.style.display="none"; }
 
-// FIX + MEJORA: guardar todos los datos sin undefined
+function openSettings(){
+  settingsModal.style.display="flex";
+}
+
+function closeSettings(){
+  settingsModal.style.display="none";
+}
+
+darkSwitch.addEventListener("change",()=>{
+  dark = darkSwitch.checked;
+  document.body.classList.toggle("dark",dark);
+  document.querySelector(".toggle").textContent = dark ? "☀️" : "🌙";
+  localStorage.setItem("darkMode",dark);
+});
+
 function saveCard(){
   const card={
     name: name.value || "Tarjeta principal",
@@ -209,18 +299,16 @@ function saveCard(){
     phone: phone.value || ""
   };
 
-  const cards=JSON.parse(localStorage.getItem("cards")||"[]");
-  cards.push(card);
-  localStorage.setItem("cards",JSON.stringify(cards));
+  const cardsArr=JSON.parse(localStorage.getItem("cards")||"[]");
+  cardsArr.push(card);
+  localStorage.setItem("cards",JSON.stringify(cardsArr));
   render();
   closeModal();
 }
 
-// FIX: render estable + eliminar tarjeta
 function render(){
   cards.innerHTML="";
   const data=JSON.parse(localStorage.getItem("cards")||"[]");
-
   data.forEach((c,i)=>{
     cards.innerHTML+=`
       <div class="card" onclick="removeCard(${i})">
@@ -243,63 +331,15 @@ function removeCard(index){
   }
 }
 
-// AÑADIDO
-function openSettings(){
-  alert("Próximamente: seguridad, backup y preferencias");
-}
+// Formato MM/YY automático
+date.addEventListener("input",()=>{
+  let v = date.value.replace(/\D/g,"").slice(0,4);
+  if(v.length>=3) v = v.slice(0,2)+"/"+v.slice(2);
+  date.value=v;
+});
 
 render();
-// ===============================
-// FIX FECHA VENCIMIENTO MM/YY
-// ===============================
-const dateInput = document.getElementById("date");
-
-if (dateInput) {
-  dateInput.addEventListener("input", function () {
-    let value = dateInput.value.replace(/\D/g, "");
-
-    if (value.length > 4) {
-      value = value.slice(0, 4);
-    }
-
-    if (value.length >= 3) {
-      value = value.slice(0, 2) + "/" + value.slice(2);
-    }
-
-    dateInput.value = value;
-  });
-}
 </script>
-  <!-- MODAL AJUSTES -->
-<script>
-function openSettings(){
-  document.getElementById("settingsModal").style.display = "flex";
-}
-  
-  <div class="modal" id="settingsModal">
-  <div class="modal-content">
-
-    <h3>Ajustes</h3>
-
-    <div class="setting">
-      <span>Modo oscuro</span>
-      <label class="switch">
-        <input type="checkbox" id="darkSwitch">
-        <span class="slider"></span>
-      </label>
-    </div>
-
-    <div class="company">
-      CM Company
-    </div>
-
-    <button onclick="closeSettings()">Cerrar</button>
-function closeSettings(){
-  document.getElementById("settingsModal").style.display = "none";
-}
-</script>
-  </div>
-</div>
 
 </body>
 </html>
