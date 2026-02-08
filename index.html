@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CM Card</title>
 
-<!-- PWA -->
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0a3d62">
+<meta name="theme-color" content="#0f9d58">
 
-<!-- iOS PWA -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CM Card">
 
-<!-- ICONOS -->
-<link rel="apple-touch-icon" sizes="180x180" href="apple-icon.png">
+<link rel="apple-touch-icon" href="apple-icon.png">
 <link rel="icon" type="image/png" href="apple-icon.png">
 
 <style>
@@ -49,15 +46,9 @@ header{
   align-items:center;
 }
 
-h1{
-  font-size:28px;
-  font-weight:700;
-}
+h1{ font-size:28px; }
 
-.toggle{
-  font-size:24px;
-  cursor:pointer;
-}
+.toggle{ font-size:22px; cursor:pointer; }
 
 /* CARD */
 .card{
@@ -69,24 +60,25 @@ h1{
   color:white;
   box-shadow:0 25px 40px rgba(0,0,0,.35);
   transition:.3s;
+  position:relative;
 }
 
-.card:hover{ transform:scale(1.03); }
+.card:active{ transform:scale(.97); }
 
 .card img{
-  width:90px;
-  margin-bottom:20px;
+  width:80px;
+  margin-bottom:15px;
 }
 
 .number{
   font-size:22px;
   letter-spacing:3px;
+  margin-bottom:10px;
 }
 
 .footer{
   display:flex;
   justify-content:space-between;
-  margin-top:15px;
 }
 
 /* MODALS */
@@ -138,13 +130,11 @@ button{
   right:0;
   background:var(--bg);
   display:flex;
-  gap:10px;
   justify-content:space-around;
   padding:15px;
   box-shadow:0 -10px 30px rgba(0,0,0,.25);
 }
 
-/* ACTION BUTTON */
 .action-btn{
   background:#000;
   font-size:20px;
@@ -158,7 +148,6 @@ button{
   margin:15px 0;
 }
 
-/* iOS SWITCH */
 .ios-switch{
   position:relative;
   width:50px;
@@ -214,43 +203,41 @@ button{
 <div id="cards"></div>
 
 <div class="bottom">
-  <button onclick="openModal()">➕</button>
+  <button onclick="openAdd()">➕</button>
   <button class="action-btn" onclick="openActions()">⚡</button>
   <button onclick="openSettings()">⚙️</button>
 </div>
 
 <!-- MODAL AGREGAR -->
-<div class="modal" id="modal">
+<div class="modal" id="addModal">
   <div class="modal-content">
     <input id="name" placeholder="Nombre">
-    <input id="number" maxlength="16" placeholder="Tarjeta (16 dígitos)">
+    <input id="number" maxlength="16" placeholder="Número tarjeta">
     <input id="date" maxlength="5" placeholder="MM/YY">
-    <input id="pin" type="password" placeholder="PIN">
-    <select id="currency">
-      <option>USD</option>
-      <option>CUP</option>
-      <option>MLC</option>
-    </select>
-    <input id="phone" placeholder="+53 5XXXXXXX">
     <button onclick="saveCard()">Guardar</button>
-    <button onclick="closeModal()">Cerrar</button>
+    <button onclick="closeAdd()">Cerrar</button>
   </div>
 </div>
 
 <!-- MODAL ACCIONES -->
 <div class="modal" id="actionsModal">
   <div class="modal-content">
-    <h3>Acciones</h3>
     <button onclick="authenticate()">Autenticarse</button>
     <button onclick="closeActions()">Cerrar</button>
+  </div>
+</div>
+
+<!-- MODAL TARJETA -->
+<div class="modal" id="cardModal">
+  <div class="modal-content">
+    <button onclick="deleteCard()">Eliminar tarjeta</button>
+    <button onclick="closeCard()">Cerrar</button>
   </div>
 </div>
 
 <!-- MODAL AJUSTES -->
 <div class="modal" id="settingsModal">
   <div class="modal-content">
-    <h3>Ajustes</h3>
-
     <div class="setting-row">
       <span>Modo oscuro</span>
       <label class="ios-switch">
@@ -258,38 +245,31 @@ button{
         <span class="slider"></span>
       </label>
     </div>
-
     <div class="company">CM Company</div>
     <button onclick="closeSettings()">Cerrar</button>
   </div>
 </div>
 
 <script>
-let dark=false;
+let selectedIndex=null;
+let dark=localStorage.getItem("dark")==="true";
 
-// Modo oscuro persistente
-dark = localStorage.getItem("darkMode")==="true";
 if(dark){
   document.body.classList.add("dark");
-  document.querySelector(".toggle").textContent="☀️";
+  darkSwitch.checked=true;
 }
 
 function toggleTheme(){
   dark=!dark;
   document.body.classList.toggle("dark",dark);
-  document.querySelector(".toggle").textContent = dark ? "☀️" : "🌙";
-  localStorage.setItem("darkMode",dark);
+  localStorage.setItem("dark",dark);
   darkSwitch.checked=dark;
 }
 
-darkSwitch.addEventListener("change",()=>{
-  dark = darkSwitch.checked;
-  document.body.classList.toggle("dark",dark);
-  localStorage.setItem("darkMode",dark);
-});
+darkSwitch.onchange=toggleTheme;
 
-function openModal(){ modal.style.display="flex"; }
-function closeModal(){ modal.style.display="none"; }
+function openAdd(){ addModal.style.display="flex"; }
+function closeAdd(){ addModal.style.display="none"; }
 
 function openSettings(){ settingsModal.style.display="flex"; }
 function closeSettings(){ settingsModal.style.display="none"; }
@@ -297,17 +277,31 @@ function closeSettings(){ settingsModal.style.display="none"; }
 function openActions(){ actionsModal.style.display="flex"; }
 function closeActions(){ actionsModal.style.display="none"; }
 
+function openCard(i){
+  selectedIndex=i;
+  cardModal.style.display="flex";
+}
+
+function closeCard(){ cardModal.style.display="none"; }
+
 function saveCard(){
-  const card={
-    name:name.value||"Tarjeta",
-    number:number.value||"",
-    date:date.value||"--/--"
-  };
-  const cardsArr=JSON.parse(localStorage.getItem("cards")||"[]");
-  cardsArr.push(card);
-  localStorage.setItem("cards",JSON.stringify(cardsArr));
+  const cards=JSON.parse(localStorage.getItem("cards")||"[]");
+  cards.push({name:name.value,number:number.value,date:date.value});
+  localStorage.setItem("cards",JSON.stringify(cards));
   render();
-  closeModal();
+  closeAdd();
+}
+
+function deleteCard(){
+  const cards=JSON.parse(localStorage.getItem("cards"));
+  cards.splice(selectedIndex,1);
+  localStorage.setItem("cards",JSON.stringify(cards));
+  closeCard();
+  render();
+}
+
+function mask(num){
+  return "**** **** **** " + num.slice(-4);
 }
 
 function render(){
@@ -315,31 +309,29 @@ function render(){
   const data=JSON.parse(localStorage.getItem("cards")||"[]");
   data.forEach((c,i)=>{
     cards.innerHTML+=`
-      <div class="card">
-        <div class="number">${c.number}</div>
-        <div class="footer">
-          <span>${c.name}</span>
-          <span>${c.date}</span>
-        </div>
-      </div>`;
+    <div class="card" onclick="openCard(${i})">
+      <img src="logo.png">
+      <div class="number">${mask(c.number)}</div>
+      <div class="footer">
+        <span>${c.name}</span>
+        <span>${c.date}</span>
+      </div>
+    </div>`;
   });
 }
 
 function authenticate(){
-  const data=JSON.parse(localStorage.getItem("cards")||"[]");
-  if(!data.length){ alert("No hay tarjetas"); return; }
-
-  const cardNumber=data[0].number;
-  const ussd=`*444*40*03*${cardNumber}#`;
-
-  window.location.href = "tel:" + ussd;
+  const cards=JSON.parse(localStorage.getItem("cards")||"[]");
+  if(!cards.length) return alert("No hay tarjetas");
+  const ussd=`*133*40*03*${cards[0].number}#`;
+  window.location.href="tel:"+ussd;
 }
 
-date.addEventListener("input",()=>{
+date.oninput=()=>{
   let v=date.value.replace(/\D/g,"").slice(0,4);
   if(v.length>=3) v=v.slice(0,2)+"/"+v.slice(2);
   date.value=v;
-});
+};
 
 render();
 </script>
