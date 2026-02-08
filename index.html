@@ -7,149 +7,129 @@
 
 <style>
 :root{
-  --bg1:#f2f2f7;
-  --bg2:#e5e5ea;
+  --bg:#f5f5f7;
   --text:#000;
-  --sub:#6e6e73;
-  --card:#ffffff;
-  --border:#d1d1d6;
-}
-body.dark{
-  --bg1:#000;
-  --bg2:#1c1c1e;
-  --text:#fff;
-  --sub:#9a9a9d;
-  --card:#1c1c1e;
-  --border:#0a84ff;
+  --card1:#0f9d58;
+  --card2:#0b7a44;
+  --border:#ccc;
 }
 
-*{box-sizing:border-box}
+body.dark{
+  --bg:#0f0f12;
+  --text:#fff;
+  --border:#333;
+}
 
 body{
   margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"San Francisco";
-  background:linear-gradient(180deg,var(--bg1),var(--bg2));
+  font-family:-apple-system,BlinkMacSystemFont;
+  background:var(--bg);
   color:var(--text);
-  min-height:100vh;
-  transition:.4s ease;
+  transition:.3s;
 }
 
 /* HEADER */
 header{
-  padding:28px 22px 18px;
+  padding:20px;
   display:flex;
   justify-content:space-between;
-  align-items:flex-start;
+  align-items:center;
 }
+
 h1{
-  margin:0;
-  font-size:34px;
+  font-size:32px;
   font-weight:700;
-}
-.subtitle{
-  margin-top:6px;
-  font-size:15px;
-  color:var(--sub);
+  letter-spacing:-1px;
+  text-shadow:0 4px 12px rgba(0,0,0,.15);
 }
 
-/* THEME BUTTON */
-.icon-btn{
-  width:44px;
-  height:44px;
-  border:none;
-  border-radius:14px;
-  font-size:22px;
-  background:var(--card);
-  box-shadow:0 10px 20px rgba(0,0,0,.18);
+.toggle{
+  font-size:24px;
+  cursor:pointer;
 }
-.icon-btn:active{transform:scale(.94)}
 
-/* CARDS */
-.cards{
-  padding-bottom:20px;
-}
+/* CARD */
 .card{
-  margin:22px;
-  padding:26px 22px 24px;
-  border-radius:26px;
-  background:linear-gradient(135deg,#0bbf6a,#1fd286);
+  width:90%;
+  margin:20px auto;
+  padding:20px;
+  border-radius:22px;
+  background:linear-gradient(135deg,var(--card1),var(--card2));
   color:white;
-  box-shadow:0 25px 45px rgba(0,0,0,.28);
-  animation:up .5s ease;
+  box-shadow:0 25px 40px rgba(0,0,0,.35);
+  transform-style:preserve-3d;
+  transition:.3s;
 }
-.card-logo{
-  display:block;
-  margin:0 auto 18px;
-  height:60px;
-  background:none;
-  mix-blend-mode:screen;
-  filter:drop-shadow(0 6px 14px rgba(0,0,0,.4));
+
+.card:hover{
+  transform:scale(1.03);
 }
-.card-num{
+
+.card img{
+  width:90px;
+  margin-bottom:20px;
+}
+
+.number{
   font-size:20px;
-  letter-spacing:3px;
-  margin-bottom:14px;
+  letter-spacing:2px;
 }
 
-/* ACTION BUTTONS (NO FIJOS) */
-.actions{
+.footer{
   display:flex;
-  gap:16px;
-  padding:30px 22px 40px;
-}
-.action-btn{
-  flex:1;
-  padding:16px 0;
-  border:none;
-  border-radius:18px;
-  font-weight:600;
-  background:linear-gradient(180deg,#fff,#e5e5ea);
-  box-shadow:0 12px 24px rgba(0,0,0,.2);
-}
-body.dark .action-btn{
-  background:linear-gradient(180deg,#2c2c2e,#1c1c1e);
-  color:white;
+  justify-content:space-between;
+  margin-top:15px;
 }
 
-/* MODALS */
+/* MODAL */
 .modal{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.45);
+  background:rgba(0,0,0,.5);
   display:none;
   align-items:center;
   justify-content:center;
 }
-.modal-box{
+
+.modal-content{
+  background:var(--bg);
+  padding:20px;
+  border-radius:20px;
   width:90%;
-  background:var(--card);
-  border-radius:26px;
-  padding:22px;
-  color:var(--text);
-  animation:up .4s ease;
 }
 
-/* INPUTS */
-input{
+input,select{
   width:100%;
-  padding:12px;
-  margin-top:12px;
-  border-radius:14px;
+  padding:10px;
+  margin:6px 0;
+  border-radius:10px;
   border:2px solid var(--border);
   background:transparent;
   color:var(--text);
-  font-size:15px;
-  transition:.3s;
-}
-input:focus{
-  outline:none;
-  border-color:#0a84ff;
 }
 
-/* ANIMATION */
-@keyframes up{
-  from{transform:translateY(30px);opacity:0}
-  to{transform:none;opacity:1}
+button{
+  padding:12px;
+  width:100%;
+  margin-top:10px;
+  border-radius:12px;
+  border:none;
+  background:#0f9d58;
+  color:white;
+  font-size:16px;
+}
+
+/* BOTTOM BAR */
+.bottom{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:var(--bg);
+  display:flex;
+  justify-content:space-around;
+  padding:15px;
+  box-shadow:0 -10px 30px rgba(0,0,0,.25);
 }
 </style>
 </head>
@@ -157,85 +137,75 @@ input:focus{
 <body>
 
 <header>
-  <div>
-    <h1>CM Card</h1>
-    <div class="subtitle">Gracias por elegirnos</div>
-  </div>
-  <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+  <h1>CM Card</h1>
+  <div class="toggle" onclick="toggleTheme()">🌙</div>
 </header>
 
-<div class="cards" id="cards"></div>
+<div id="cards"></div>
 
-<div class="actions">
-  <button class="action-btn" onclick="openAdd()">➕ Agregar tarjeta</button>
-  <button class="action-btn" onclick="openSettings()">⚙️ Ajustes</button>
+<div class="bottom">
+  <button onclick="openModal()">➕ Agregar</button>
 </div>
 
-<!-- ADD CARD -->
-<div class="modal" id="addModal">
-  <div class="modal-box">
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-content">
     <input id="name" placeholder="Nombre">
-    <input id="number" placeholder="Número de tarjeta" maxlength="16" inputmode="numeric">
-    <input id="date" placeholder="YY/MM" maxlength="5" inputmode="numeric">
-    <button class="action-btn" onclick="saveCard()">Guardar</button>
-    <button class="action-btn" onclick="closeAll()">Cancelar</button>
-  </div>
-</div>
-
-<!-- SETTINGS -->
-<div class="modal" id="settingsModal">
-  <div class="modal-box">
-    <strong>CM Company</strong><br><br>
-    <button class="action-btn" onclick="toggleTheme()">Cambiar modo</button>
-    <button class="action-btn" onclick="closeAll()">Cerrar</button>
+    <input id="number" maxlength="16" placeholder="Tarjeta (16 dígitos)">
+    <input id="date" maxlength="5" placeholder="YY/MM">
+    <input id="pin" type="password" placeholder="PIN">
+    <select id="currency">
+      <option>USD</option>
+      <option>CUP</option>
+      <option>MLC</option>
+    </select>
+    <input id="phone" placeholder="+53 5XXXXXXX">
+    <button onclick="saveCard()">Guardar</button>
+    <button onclick="closeModal()">Cerrar</button>
   </div>
 </div>
 
 <script>
-const cardsEl=document.getElementById("cards");
-const btn=document.getElementById("themeBtn");
+let dark=false;
 
 function toggleTheme(){
+  dark=!dark;
   document.body.classList.toggle("dark");
-  btn.textContent=document.body.classList.contains("dark")?"☀️":"🌙";
 }
 
-/* MODALS */
-function openAdd(){addModal.style.display="flex"}
-function openSettings(){settingsModal.style.display="flex"}
-function closeAll(){document.querySelectorAll(".modal").forEach(m=>m.style.display="none")}
+function openModal(){ modal.style.display="flex"; }
+function closeModal(){ modal.style.display="none"; }
 
-/* DATE FORMAT */
-date.addEventListener("input",()=>{
-  let v=date.value.replace(/\D/g,"").slice(0,4);
-  if(v.length>2) v=v.slice(0,2)+"/"+v.slice(2);
-  date.value=v;
-});
-
-/* STORAGE */
-function saveToStorage(){
-  localStorage.setItem("cmcards",cardsEl.innerHTML);
-}
-function loadFromStorage(){
-  const d=localStorage.getItem("cmcards");
-  if(d) cardsEl.innerHTML=d;
-}
-loadFromStorage();
-
-/* SAVE CARD */
 function saveCard(){
-  const card=document.createElement("div");
-  card.className="card";
-  card.innerHTML=`
-    <img src="logo.PNG" class="card-logo">
-    <div class="card-num">${number.value.replace(/(.{4})/g,"$1 ")}</div>
-    <div>${name.value}</div>
-    <div>Vence ${date.value}</div>`;
-  card.onclick=()=>confirm("¿Eliminar tarjeta?")&&(card.remove(),saveToStorage());
-  cardsEl.appendChild(card);
-  saveToStorage();
-  closeAll();
+  const card={
+    name:name.value,
+    number:number.value,
+    date:date.value
+  };
+  const cards=JSON.parse(localStorage.getItem("cards")||"[]");
+  cards.push(card);
+  localStorage.setItem("cards",JSON.stringify(cards));
+  render();
+  closeModal();
 }
+
+function render(){
+  cards.innerHTML="";
+  const data=JSON.parse(localStorage.getItem("cards")||"[]");
+  data.forEach(c=>{
+    cards.innerHTML+=`
+      <div class="card">
+        <img src="logo.png">
+        <div class="number">${c.number}</div>
+        <div class="footer">
+          <span>${c.name}</span>
+          <span>${c.date}</span>
+        </div>
+      </div>`;
+  });
+}
+
+render();
 </script>
 
 </body>
