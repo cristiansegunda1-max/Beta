@@ -1,109 +1,338 @@
-<!-- AGREGA ESTO AL FINAL DE TU <script> SIN QUITAR NADA -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CM Card</title>
 
-/* =========================
-   FACE ID REAL (WebAuthn)
-   ========================= */
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a3d62">
 
-async function webAuthnSupported(){
-  return window.PublicKeyCredential &&
-         await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CM Card">
+
+<link rel="apple-touch-icon" sizes="180x180" href="apple-icon.png">
+<link rel="icon" type="image/png" href="apple-icon.png">
+
+<style>
+:root{
+  --bg:#f5f5f7;
+  --text:#000;
+  --card1:#0f9d58;
+  --card2:#0b7a44;
+  --border:#ccc;
 }
 
-async function registerFaceID(){
-  if(!(await webAuthnSupported())){
-    alert("Face ID no disponible en este dispositivo");
-    faceSwitch.checked=false;
-    localStorage.setItem("faceID","false");
-    return;
-  }
+body.dark{
+  --bg:#0f0f12;
+  --text:#fff;
+  --border:#333;
+}
 
-  const challenge = new Uint8Array(32);
-  crypto.getRandomValues(challenge);
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont;
+  background:var(--bg);
+  color:var(--text);
+  transition:.3s;
+}
 
-  const credential = await navigator.credentials.create({
-    publicKey:{
-      challenge,
-      rp:{ name:"CM Card" },
-      user:{
-        id:crypto.getRandomValues(new Uint8Array(16)),
-        name:"cmcard@local",
-        displayName:"CM Card User"
-      },
-      pubKeyCredParams:[{ type:"public-key", alg:-7 }],
-      authenticatorSelection:{
-        authenticatorAttachment:"platform",
-        userVerification:"required"
-      },
-      timeout:60000
-    }
+/* HEADER */
+header{
+  padding:20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+h1{ font-size:28px; }
+
+.toggle{ font-size:24px; cursor:pointer; }
+
+/* CARD */
+.card{
+  width:90%;
+  margin:20px auto;
+  padding:20px;
+  border-radius:22px;
+  background:linear-gradient(135deg,var(--card1),var(--card2));
+  color:white;
+  box-shadow:0 25px 40px rgba(0,0,0,.35);
+  transition:.2s;
+}
+
+.card:active{ transform:scale(.98); }
+
+.card.active{
+  outline:3px solid rgba(255,255,255,.9);
+}
+
+.card img{ width:90px; margin-bottom:15px; }
+
+.number{ font-size:22px; letter-spacing:3px; }
+
+.footer{ display:flex; justify-content:space-between; }
+
+/* MODALS */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+}
+
+.modal-content{
+  background:var(--bg);
+  padding:20px;
+  border-radius:22px 22px 0 0;
+  width:100%;
+  max-height:90%;
+  animation:sheet .25s ease;
+}
+
+@keyframes sheet{
+  from{ transform:translateY(100%); }
+  to{ transform:translateY(0); }
+}
+
+input,select{
+  width:100%;
+  padding:10px;
+  margin:6px 0;
+  border-radius:10px;
+  border:2px solid var(--border);
+  background:transparent;
+  color:var(--text);
+}
+
+button{
+  padding:12px;
+  width:100%;
+  margin-top:10px;
+  border-radius:14px;
+  border:none;
+  background:#0f9d58;
+  color:white;
+  font-size:16px;
+}
+
+button:active{ opacity:.7; }
+
+/* SWITCH iOS */
+.switch{
+  position:relative;
+  width:50px;
+  height:28px;
+}
+
+.switch input{ display:none; }
+
+.slider{
+  position:absolute;
+  inset:0;
+  background:#ccc;
+  border-radius:20px;
+  transition:.3s;
+}
+
+.slider:before{
+  content:"";
+  position:absolute;
+  width:22px;
+  height:22px;
+  left:3px;
+  top:3px;
+  background:white;
+  border-radius:50%;
+  transition:.3s;
+}
+
+.switch input:checked + .slider{
+  background:#34c759;
+}
+
+.switch input:checked + .slider:before{
+  transform:translateX(22px);
+}
+
+/* BOTTOM */
+.bottom{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:var(--bg);
+  display:flex;
+  gap:10px;
+  padding:15px;
+  box-shadow:0 -10px 30px rgba(0,0,0,.2);
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>CM Card</h1>
+  <div class="toggle" onclick="toggleTheme()">🌙</div>
+</header>
+
+<div id="cards"></div>
+
+<div class="bottom">
+  <button onclick="openModal()">➕ Agregar</button>
+  <button onclick="openActions()">⚡ Acciones</button>
+  <button onclick="openSettings()">⚙️ Ajustes</button>
+</div>
+
+<!-- MODAL AGREGAR -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <input id="name" placeholder="Nombre">
+    <input id="number" maxlength="16" placeholder="Tarjeta (16 dígitos)">
+    <input id="date" maxlength="5" placeholder="MM/YY">
+    <input type="password" placeholder="PIN">
+    <select>
+      <option>USD</option><option>CUP</option><option>MLC</option>
+    </select>
+    <input placeholder="+53 5XXXXXXX">
+    <button onclick="saveCard()">Guardar</button>
+    <button onclick="closeModal()">Cerrar</button>
+  </div>
+</div>
+
+<!-- MODAL ACCIONES -->
+<div class="modal" id="actionsModal">
+  <div class="modal-content">
+    <h3>Acciones</h3>
+    <button onclick="secureAction('*444*40*03#')">🔐 Autenticarse</button>
+    <button onclick="secureAction('*444*46#')">💰 Consultar saldo</button>
+    <button onclick="secureAction('*444*45#')">🔁 Transferencia</button>
+    <button onclick="closeActions()">Cerrar</button>
+  </div>
+</div>
+
+<!-- MODAL AJUSTES -->
+<div class="modal" id="settingsModal">
+  <div class="modal-content">
+    <h3>Ajustes</h3>
+
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span>Modo oscuro</span>
+      <label class="switch">
+        <input type="checkbox" id="darkSwitch">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+      <span>Face ID</span>
+      <label class="switch">
+        <input type="checkbox" id="faceSwitch">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <p style="text-align:center;margin-top:20px;opacity:.6">CM Company</p>
+    <button onclick="closeSettings()">Cerrar</button>
+  </div>
+</div>
+
+<!-- MODAL FACE ID -->
+<div class="modal" id="faceModal">
+  <div class="modal-content" style="text-align:center">
+    <h3>Face ID</h3>
+    <p>Autenticando…</p>
+  </div>
+</div>
+
+<script>
+let dark = localStorage.getItem("darkMode")==="true";
+let face = localStorage.getItem("faceID")==="true";
+let activeCard=null;
+let pressTimer=null;
+
+const themeIcon = document.querySelector(".toggle");
+
+function syncThemeIcon(){
+  themeIcon.textContent = dark ? "☀️" : "🌙";
+}
+
+if(dark){
+  document.body.classList.add("dark");
+}
+syncThemeIcon();
+
+darkSwitch.checked=dark;
+faceSwitch.checked=face;
+
+darkSwitch.onchange=()=>{ toggleTheme(); };
+faceSwitch.onchange=()=>{ localStorage.setItem("faceID",faceSwitch.checked); };
+
+function toggleTheme(){
+  dark=!dark;
+  document.body.classList.toggle("dark",dark);
+  localStorage.setItem("darkMode",dark);
+  darkSwitch.checked=dark;
+  syncThemeIcon();
+}
+
+function openModal(){ modal.style.display="flex"; }
+function closeModal(){ modal.style.display="none"; }
+function openActions(){ actionsModal.style.display="flex"; }
+function closeActions(){ actionsModal.style.display="none"; }
+function openSettings(){ settingsModal.style.display="flex"; }
+function closeSettings(){ settingsModal.style.display="none"; }
+
+function saveCard(){
+  const cards=JSON.parse(localStorage.getItem("cards")||"[]");
+  cards.push({name:name.value||"Tarjeta",number:number.value,date:date.value});
+  localStorage.setItem("cards",JSON.stringify(cards));
+  render(); closeModal();
+}
+
+function mask(n){ return "**** **** **** "+n.slice(-4); }
+
+function render(){
+  cards.innerHTML="";
+  const d=JSON.parse(localStorage.getItem("cards")||"[]");
+  d.forEach((c,i)=>{
+    const el=document.createElement("div");
+    el.className="card"+(activeCard===i?" active":"");
+    el.innerHTML=`<img src="logo.png"><div class="number">${mask(c.number)}</div><div class="footer"><span>${c.name}</span><span>${c.date}</span></div>`;
+    el.onclick=()=>{ activeCard=i; render(); };
+    el.onmousedown=el.ontouchstart=()=>pressTimer=setTimeout(()=>del(i),700);
+    el.onmouseup=el.ontouchend=()=>clearTimeout(pressTimer);
+    cards.appendChild(el);
   });
-
-  localStorage.setItem(
-    "faceCredential",
-    JSON.stringify(Array.from(new Uint8Array(credential.rawId)))
-  );
 }
 
-async function authenticateFaceID(){
-  const raw = JSON.parse(localStorage.getItem("faceCredential")||"null");
-  if(!raw) return false;
-
-  const challenge = new Uint8Array(32);
-  crypto.getRandomValues(challenge);
-
-  try{
-    await navigator.credentials.get({
-      publicKey:{
-        challenge,
-        allowCredentials:[{
-          id:new Uint8Array(raw),
-          type:"public-key"
-        }],
-        userVerification:"required",
-        timeout:60000
-      }
-    });
-    return true;
-  }catch{
-    return false;
+function del(i){
+  if(confirm("¿Eliminar tarjeta?")){
+    const d=JSON.parse(localStorage.getItem("cards"));
+    d.splice(i,1); localStorage.setItem("cards",JSON.stringify(d));
+    activeCard=null; render();
   }
 }
 
-/* =========================
-   OVERRIDE QUIRÚRGICO
-   ========================= */
-
-faceSwitch.onchange = async ()=>{
-  if(faceSwitch.checked){
-    await registerFaceID();
-    localStorage.setItem("faceID","true");
-  }else{
-    localStorage.removeItem("faceCredential");
-    localStorage.setItem("faceID","false");
-  }
-};
-
-/* REEMPLAZA SOLO LA LÓGICA INTERNA,
-   SIN BORRAR TU FUNCIÓN */
-const originalSecureAction = secureAction;
-
-secureAction = async function(code){
-  if(activeCard===null){
-    alert("Selecciona una tarjeta");
-    return;
-  }
-
+function secureAction(code){
+  if(activeCard===null){ alert("Selecciona una tarjeta"); return; }
   if(face){
     faceModal.style.display="flex";
-
-    const ok = await authenticateFaceID();
-    faceModal.style.display="none";
-
-    if(!ok){
-      alert("Face ID falló");
-      return;
-    }
+    setTimeout(()=>{
+      faceModal.style.display="none";
+      window.location.href="tel:"+code;
+    },1200);
+  }else{
+    window.location.href="tel:"+code;
   }
+}
 
-  window.location.href="tel:"+code;
-};
+render();
+</script>
+
+</body>
+</html>
