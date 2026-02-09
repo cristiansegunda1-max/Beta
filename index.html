@@ -5,16 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>CM Card</title>
 
-<!-- PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0a3d62">
 
-<!-- iOS -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CM Card">
 
-<!-- ICONOS -->
 <link rel="apple-touch-icon" sizes="180x180" href="apple-icon.png">
 <link rel="icon" type="image/png" href="apple-icon.png">
 
@@ -41,7 +38,6 @@ body{
   transition:.3s;
 }
 
-/* HEADER */
 header{
   padding:20px;
   display:flex;
@@ -49,17 +45,10 @@ header{
   align-items:center;
 }
 
-h1{
-  font-size:28px;
-  font-weight:700;
-}
+h1{ font-size:28px; }
 
-.toggle{
-  font-size:24px;
-  cursor:pointer;
-}
+.toggle{ font-size:24px; cursor:pointer; }
 
-/* CARD */
 .card{
   width:90%;
   margin:20px auto;
@@ -71,25 +60,15 @@ h1{
 }
 
 .card.active{
-  outline:3px solid rgba(255,255,255,.8);
+  outline:3px solid rgba(255,255,255,.9);
 }
 
-.card img{
-  width:90px;
-  margin-bottom:15px;
-}
+.card img{ width:90px; margin-bottom:15px; }
 
-.number{
-  font-size:22px;
-  letter-spacing:3px;
-}
+.number{ font-size:22px; letter-spacing:3px; }
 
-.footer{
-  display:flex;
-  justify-content:space-between;
-}
+.footer{ display:flex; justify-content:space-between; }
 
-/* MODALS */
 .modal{
   position:fixed;
   inset:0;
@@ -127,7 +106,6 @@ button{
   font-size:16px;
 }
 
-/* BOTTOM BAR */
 .bottom{
   position:fixed;
   bottom:0;
@@ -156,7 +134,7 @@ button{
   <button onclick="openSettings()">⚙️ Ajustes</button>
 </div>
 
-<!-- MODAL AGREGAR -->
+<!-- MODALES -->
 <div class="modal" id="modal">
   <div class="modal-content">
     <input id="name" placeholder="Nombre">
@@ -164,9 +142,7 @@ button{
     <input id="date" maxlength="5" placeholder="MM/YY">
     <input id="pin" type="password" placeholder="PIN">
     <select id="currency">
-      <option>USD</option>
-      <option>CUP</option>
-      <option>MLC</option>
+      <option>USD</option><option>CUP</option><option>MLC</option>
     </select>
     <input id="phone" placeholder="+53 5XXXXXXX">
     <button onclick="saveCard()">Guardar</button>
@@ -174,7 +150,6 @@ button{
   </div>
 </div>
 
-<!-- MODAL ACCIONES -->
 <div class="modal" id="actionsModal">
   <div class="modal-content">
     <h3>Acciones</h3>
@@ -183,11 +158,10 @@ button{
   </div>
 </div>
 
-<!-- MODAL AUTENTICAR -->
 <div class="modal" id="authModal">
   <div class="modal-content">
     <h3>Autenticarse</h3>
-    <input type="password" id="authPin" placeholder="PIN de la tarjeta">
+    <input type="password" placeholder="PIN de la tarjeta">
     <button onclick="authenticate()">Aceptar</button>
     <button onclick="closeAuth()">Cancelar</button>
   </div>
@@ -196,6 +170,7 @@ button{
 <script>
 let dark = localStorage.getItem("darkMode")==="true";
 let activeCard = null;
+let pressTimer = null;
 
 if(dark){
   document.body.classList.add("dark");
@@ -211,14 +186,9 @@ function toggleTheme(){
 
 function openModal(){ modal.style.display="flex"; }
 function closeModal(){ modal.style.display="none"; }
-
 function openActions(){ actionsModal.style.display="flex"; }
 function closeActions(){ actionsModal.style.display="none"; }
-
-function openAuth(){
-  actionsModal.style.display="none";
-  authModal.style.display="flex";
-}
+function openAuth(){ actionsModal.style.display="none"; authModal.style.display="flex"; }
 function closeAuth(){ authModal.style.display="none"; }
 
 function maskCard(n){
@@ -226,13 +196,8 @@ function maskCard(n){
 }
 
 function saveCard(){
-  const card={
-    name:name.value || "Tarjeta",
-    number:number.value,
-    date:date.value
-  };
   const cards=JSON.parse(localStorage.getItem("cards")||"[]");
-  cards.push(card);
+  cards.push({name:name.value||"Tarjeta",number:number.value,date:date.value});
   localStorage.setItem("cards",JSON.stringify(cards));
   render();
   closeModal();
@@ -242,21 +207,21 @@ function render(){
   cards.innerHTML="";
   const data=JSON.parse(localStorage.getItem("cards")||"[]");
   data.forEach((c,i)=>{
-    cards.innerHTML+=`
-      <div class="card ${activeCard===i?'active':''}" onclick="selectCard(${i})">
-        <img src="logo.png">
-        <div class="number">${maskCard(c.number)}</div>
-        <div class="footer">
-          <span>${c.name}</span>
-          <span>${c.date}</span>
-        </div>
-      </div>`;
+    const div=document.createElement("div");
+    div.className="card"+(activeCard===i?" active":"");
+    div.innerHTML=`
+      <img src="logo.png">
+      <div class="number">${maskCard(c.number)}</div>
+      <div class="footer"><span>${c.name}</span><span>${c.date}</span></div>
+    `;
+    div.onclick=()=>{ activeCard=i; render(); };
+    div.onmousedown=div.ontouchstart=()=>pressTimer=setTimeout(()=>deleteCard(i),700);
+    div.onmouseup=div.ontouchend=()=>clearTimeout(pressTimer);
+    cards.appendChild(div);
   });
 }
 
-function selectCard(i){
-  activeCard = i;
-  render();
+function deleteCard(i){
   if(confirm("¿Eliminar tarjeta?")){
     const d=JSON.parse(localStorage.getItem("cards"));
     d.splice(i,1);
@@ -277,7 +242,6 @@ function authenticate(){
 
 render();
 
-/* FORMATO FECHA */
 date.addEventListener("input",()=>{
   let v=date.value.replace(/\D/g,"");
   if(v.length>4)v=v.slice(0,4);
