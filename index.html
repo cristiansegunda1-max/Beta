@@ -69,6 +69,10 @@ body{
   min-height:280px;
 }
 
+body.dark .main{
+  background:#1a1a1f;
+}
+
 .placeholder{
   text-align:center;
   opacity:.7;
@@ -136,48 +140,45 @@ body.dark .tabbar{
   border-radius:18px;
 }
 
-/* BOTÓN MODO */
+/* 🔧 BOTÓN MODO (MEJORADO, MISMA FUNCIÓN) */
 .theme-btn{
   position:absolute;
   top:28px;
   right:20px;
 
-  width:60px;
-  height:60px;
-  border-radius:18px;
+  width:64px;
+  height:64px;
+  border-radius:20px;
 
-  background:rgba(255,255,255,.75);
-  backdrop-filter:blur(22px);
-  -webkit-backdrop-filter:blur(22px);
+  background:rgba(255,255,255,.28);
+  backdrop-filter:blur(26px);
+  -webkit-backdrop-filter:blur(26px);
 
   display:flex;
   align-items:center;
   justify-content:center;
 
   box-shadow:
-    0 12px 30px rgba(0,0,0,.18),
-    inset 0 1px 0 rgba(255,255,255,.6);
+    0 14px 34px rgba(0,0,0,.18),
+    inset 0 1px 1px rgba(255,255,255,.45);
 
   cursor:pointer;
-  transition:.25s;
+  transition:transform .25s ease;
 }
 
 body.dark .theme-btn{
-  background:rgba(30,30,35,.7);
+  background:rgba(30,30,35,.65);
 }
 
 .theme-btn img{
-  width:40px;
-  height:40px;
+  width:42px;
+  height:42px;
   object-fit:contain;
-  transition:.25s;
-}
-.theme-btn:active{
-  transform:scale(.92);
+  transition:transform .35s ease, opacity .25s ease;
 }
 
-.theme-btn:active img{
-  transform:scale(.95);
+.theme-btn:active{
+  transform:scale(.92);
 }
 </style>
 </head>
@@ -191,7 +192,7 @@ body.dark .theme-btn{
 </div>
 
 <div class="theme-btn" onclick="toggleTheme()">
-  <img id="themeIcon" src="moon.png">
+  <img id="themeIcon" src="moon.PNG">
 </div>
 
 <div class="main">
@@ -211,8 +212,18 @@ body.dark .theme-btn{
 
 <script>
 function toggleTheme(){
-  document.body.classList.toggle("dark");
-  syncThemeIcon();
+  const icon = document.getElementById("themeIcon");
+
+  icon.style.opacity = "0";
+  icon.style.transform = "scale(0.6)";
+
+  setTimeout(() => {
+    document.body.classList.toggle("dark");
+    syncThemeIcon();
+
+    icon.style.opacity = "1";
+    icon.style.transform = "scale(1)";
+  }, 220); // 🔧 delay iOS-like
 }
 
 function syncThemeIcon(){
