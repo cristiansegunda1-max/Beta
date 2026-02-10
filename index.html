@@ -59,22 +59,7 @@ body{
   font-size:14px;
 }
 
-.dark-btn{
-  position:absolute;
-  top:30px;
-  right:20px;
-  width:44px;
-  height:44px;
-  border-radius:14px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#f1f1f4;
-  font-size:20px;
-  cursor:pointer;
-}
-
-/* MAIN CARD CONTAINER */
+/* MAIN CARD */
 .main{
   margin:20px;
   background:#fff;
@@ -101,10 +86,6 @@ body{
   font-size:32px;
 }
 
-.placeholder h3{
-  margin:10px 0 5px;
-}
-
 .primary-btn{
   margin-top:20px;
   background:var(--primary);
@@ -116,75 +97,66 @@ body{
   cursor:pointer;
 }
 
-/* CARD (TU TARJETA VERDE, INTACTA) */
-.card{
-  width:100%;
-  padding:20px;
-  border-radius:22px;
-  background:linear-gradient(135deg,var(--card1),var(--card2));
-  color:white;
-  box-shadow:0 25px 40px rgba(0,0,0,.35);
-  transition:.2s;
-}
-
-.card img{ width:90px; margin-bottom:15px; }
-.number{ font-size:22px; letter-spacing:3px; }
-.footer{ display:flex; justify-content:space-between; }
-
-/* BOTTOM BAR */
-.bottom{
+/* TAB BAR */
+.tabbar{
   position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  background:#fff;
-  padding:12px 10px 20px;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(255,255,255,.75);
+  backdrop-filter:blur(25px);
+  border-radius:28px;
+  padding:12px 22px;
   display:flex;
-  justify-content:space-around;
-  box-shadow:0 -10px 30px rgba(0,0,0,.15);
+  gap:26px;
+  box-shadow:0 20px 40px rgba(0,0,0,.18);
 }
 
-.nav-btn{
-  text-align:center;
-  font-size:12px;
-  opacity:.8;
+body.dark .tabbar{
+  background:rgba(30,30,35,.7);
 }
 
-.nav-btn div{
-  font-size:22px;
-  margin-bottom:4px;
+.tab-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  font-size:18px;
+  opacity:.75;
 }
 
-.nav-btn.center{
-  background:var(--primary);
-  color:#fff;
-  padding:14px;
+.tab-add{
+  width:56px;
+  height:56px;
+  background:#7b7cff;
+  color:white;
+  font-size:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   border-radius:18px;
-  margin-top:-25px;
-  font-size:22px;
 }
 
-/* MODALS (SIN CAMBIOS FUNCIONALES) */
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.4);
-  display:none;
-  align-items:flex-end;
-}
-
-.modal-content{
-  background:var(--bg);
-  padding:20px;
-  border-radius:22px 22px 0 0;
-  width:100%;
-}
-
-input,select,button{
-  width:100%;
-  margin-top:10px;
-  padding:12px;
+/* BOTÓN MODO */
+.theme-btn{
+  position:absolute;
+  top:30px;
+  right:20px;
+  width:44px;
+  height:44px;
   border-radius:14px;
+  background:rgba(255,255,255,.7);
+  backdrop-filter:blur(18px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+body.dark .theme-btn{
+  background:rgba(30,30,35,.7);
+}
+
+.theme-btn img{
+  width:26px;
 }
 </style>
 </head>
@@ -197,94 +169,39 @@ input,select,button{
   <p>Gestiona tus tarjetas desde la comodidad de CM Card</p>
 </div>
 
-<div class="dark-btn toggle" onclick="toggleTheme()">🌙</div>
+<div class="theme-btn" onclick="toggleTheme()">
+  <img id="themeIcon" src="moon.png">
+</div>
 
 <div class="main">
-  <div id="cards">
-    <div class="placeholder">
-      <div class="icon">💳</div>
-      <h3>No tienes tarjetas</h3>
-      <p>Agrega tu primera tarjeta magnética para comenzar a usarla</p>
-      <button class="primary-btn" onclick="openModal()">+ Agregar Tarjeta</button>
-    </div>
+  <div class="placeholder">
+    <div class="icon">💳</div>
+    <h3>No tienes tarjetas</h3>
+    <p>Agrega tu primera tarjeta magnética para comenzar a usarla</p>
+    <button class="primary-btn" onclick="openModal()">+ Agregar Tarjeta</button>
   </div>
 </div>
 
 <div class="tabbar">
   <div class="tab-item" onclick="openSettings()">⚙️<span>Ajustes</span></div>
-
   <div class="tab-add" onclick="openModal()">＋</div>
-
   <div class="tab-item" onclick="openActions()">⚡<span>Acciones</span></div>
 </div>
 
-<style>
-/* TAB BAR iOS PREMIUM */
-.tabbar{
-  position:fixed;
-  bottom:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:rgba(255,255,255,.75);
-  backdrop-filter:blur(25px);
-  -webkit-backdrop-filter:blur(25px);
-  border-radius:28px;
-  padding:12px 22px;
-  display:flex;
-  align-items:center;
-  gap:26px;
-  box-shadow:
-    0 20px 40px rgba(0,0,0,.18),
-    inset 0 1px 0 rgba(255,255,255,.6);
-  z-index:100;
+<script>
+function toggleTheme(){
+  document.body.classList.toggle("dark");
+  syncThemeIcon();
 }
 
-body.dark .tabbar{
-  background:rgba(30,30,35,.7);
+function syncThemeIcon(){
+  const icon = document.getElementById("themeIcon");
+  const isDark = document.body.classList.contains("dark");
+  icon.src = isDark ? "sun.png" : "moon.png";
 }
 
-/* BOTONES LATERALES */
-.tab-item{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  font-size:18px;
-  cursor:pointer;
-  opacity:.75;
-  transition:.2s;
-}
+document.addEventListener("DOMContentLoaded", syncThemeIcon);
+</script>
 
-.tab-item span{
-  font-size:11px;
-  margin-top:4px;
-}
-
-.tab-item:active{
-  transform:scale(.92);
-  opacity:1;
-}
-
-/* BOTÓN CENTRAL + */
-.tab-add{
-  width:56px;
-  height:56px;
-  background:#7b7cff;
-  color:white;
-  font-size:34px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:18px;
-  box-shadow:
-    0 10px 25px rgba(123,124,255,.45),
-    inset 0 1px 0 rgba(255,255,255,.5);
-  cursor:pointer;
-  transition:.2s;
-}
-
-.tab-add:active{
-  transform:scale(.95);
-}
-<style>
-
-<!-- TUS MODALES Y JS ORIGINAL SIGUEN IGUAL -->
+</body>
+</html>
