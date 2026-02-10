@@ -210,10 +210,81 @@ input,select,button{
   </div>
 </div>
 
-<div class="bottom">
-  <div class="nav-btn" onclick="openSettings()"><div>⚙️</div>Ajustes</div>
-  <div class="nav-btn center" onclick="openModal()">＋</div>
-  <div class="nav-btn" onclick="openActions()"><div>⚡</div>Acciones</div>
+<div class="tabbar">
+  <div class="tab-item" onclick="openSettings()">⚙️<span>Ajustes</span></div>
+
+  <div class="tab-add" onclick="openModal()">＋</div>
+
+  <div class="tab-item" onclick="openActions()">⚡<span>Acciones</span></div>
 </div>
+
+<style>
+/* TAB BAR iOS PREMIUM */
+.tabbar{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(255,255,255,.75);
+  backdrop-filter:blur(25px);
+  -webkit-backdrop-filter:blur(25px);
+  border-radius:28px;
+  padding:12px 22px;
+  display:flex;
+  align-items:center;
+  gap:26px;
+  box-shadow:
+    0 20px 40px rgba(0,0,0,.18),
+    inset 0 1px 0 rgba(255,255,255,.6);
+  z-index:100;
+}
+
+body.dark .tabbar{
+  background:rgba(30,30,35,.7);
+}
+
+/* BOTONES LATERALES */
+.tab-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  font-size:18px;
+  cursor:pointer;
+  opacity:.75;
+  transition:.2s;
+}
+
+.tab-item span{
+  font-size:11px;
+  margin-top:4px;
+}
+
+.tab-item:active{
+  transform:scale(.92);
+  opacity:1;
+}
+
+/* BOTÓN CENTRAL + */
+.tab-add{
+  width:56px;
+  height:56px;
+  background:#7b7cff;
+  color:white;
+  font-size:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:18px;
+  box-shadow:
+    0 10px 25px rgba(123,124,255,.45),
+    inset 0 1px 0 rgba(255,255,255,.5);
+  cursor:pointer;
+  transition:.2s;
+}
+
+.tab-add:active{
+  transform:scale(.95);
+}
+<style>
 
 <!-- TUS MODALES Y JS ORIGINAL SIGUEN IGUAL -->
