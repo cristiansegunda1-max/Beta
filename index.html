@@ -182,8 +182,8 @@ button:active{ opacity:.7; }
 
 <div id="cards"></div>
 
-<div class="bottom">
-  <button onclick="openModal()">➕ Agregar</button>
+<div class="bottom" id="bottomBar">
+  <button id="addBtn" onclick="openModal()">➕ Agregar</button>
   <button onclick="openActions()">⚡ Acciones</button>
   <button onclick="openSettings()">⚙️ Ajustes</button>
 </div>
@@ -193,7 +193,7 @@ button:active{ opacity:.7; }
   <div class="modal-content">
     <input id="name" placeholder="Nombre">
     <input id="number" maxlength="16" placeholder="Tarjeta (16 dígitos)">
-    <input id="date" maxlength="5" placeholder="MM/YY">
+    <input id="date" placeholder="MM/YY">
     <input type="password" placeholder="PIN">
     <select>
       <option>USD</option><option>CUP</option><option>MLC</option>
@@ -287,6 +287,12 @@ function closeActions(){ actionsModal.style.display="none"; }
 function openSettings(){ settingsModal.style.display="flex"; }
 function closeSettings(){ settingsModal.style.display="none"; }
 
+date.addEventListener("input",()=>{
+  let v=date.value.replace(/\D/g,"").slice(0,4);
+  if(v.length>2) v=v.slice(0,2)+"/"+v.slice(2);
+  date.value=v;
+});
+
 function saveCard(){
   const cards=JSON.parse(localStorage.getItem("cards")||"[]");
   cards.push({name:name.value||"Tarjeta",number:number.value,date:date.value});
@@ -299,6 +305,9 @@ function mask(n){ return "**** **** **** "+n.slice(-4); }
 function render(){
   cards.innerHTML="";
   const d=JSON.parse(localStorage.getItem("cards")||"[]");
+
+  addBtn.style.display = d.length ? "none" : "block";
+
   d.forEach((c,i)=>{
     const el=document.createElement("div");
     el.className="card"+(activeCard===i?" active":"");
