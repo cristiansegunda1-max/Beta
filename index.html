@@ -140,7 +140,7 @@ body.dark .tabbar{
   border-radius:18px;
 }
 
-/* 🔧 BOTÓN MODO (MEJORADO, MISMA FUNCIÓN) */
+/* 🌙 BOTÓN DE MODO → EL BOTÓN ES LA FOTO */
 .theme-btn{
   position:absolute;
   top:28px;
@@ -148,15 +148,14 @@ body.dark .tabbar{
 
   width:64px;
   height:64px;
-  border-radius:20px;
+  border-radius:22px;
 
-  background:rgba(255,255,255,.28);
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+
   backdrop-filter:blur(26px);
   -webkit-backdrop-filter:blur(26px);
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
 
   box-shadow:
     0 14px 34px rgba(0,0,0,.18),
@@ -166,15 +165,9 @@ body.dark .tabbar{
   transition:transform .25s ease;
 }
 
-body.dark .theme-btn{
-  background:rgba(30,30,35,.65);
-}
-
+/* La imagen interna NO se muestra */
 .theme-btn img{
-  width:42px;
-  height:42px;
-  object-fit:contain;
-  transition:transform .35s ease, opacity .25s ease;
+  display:none;
 }
 
 .theme-btn:active{
@@ -191,6 +184,7 @@ body.dark .theme-btn{
   <p>Gestiona tus tarjetas desde la comodidad de CM Card</p>
 </div>
 
+<!-- BOTÓN MODO -->
 <div class="theme-btn" onclick="toggleTheme()">
   <img id="themeIcon" src="moon.PNG">
 </div>
@@ -212,24 +206,24 @@ body.dark .theme-btn{
 
 <script>
 function toggleTheme(){
-  const icon = document.getElementById("themeIcon");
+  const btn = document.querySelector(".theme-btn");
 
-  icon.style.opacity = "0";
-  icon.style.transform = "scale(0.6)";
+  btn.style.transform = "scale(0.9)";
 
   setTimeout(() => {
     document.body.classList.toggle("dark");
     syncThemeIcon();
-
-    icon.style.opacity = "1";
-    icon.style.transform = "scale(1)";
-  }, 220); // 🔧 delay iOS-like
+    btn.style.transform = "scale(1)";
+  }, 220);
 }
 
 function syncThemeIcon(){
-  const icon = document.getElementById("themeIcon");
+  const btn = document.querySelector(".theme-btn");
   const isDark = document.body.classList.contains("dark");
-  icon.src = isDark ? "sun.PNG" : "moon.PNG";
+
+  btn.style.backgroundImage = isDark
+    ? "url('sun.PNG')"
+    : "url('moon.PNG')";
 }
 
 document.addEventListener("DOMContentLoaded", syncThemeIcon);
