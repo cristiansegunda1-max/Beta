@@ -172,11 +172,7 @@ body.dark .tabbar{
   transform:scale(.92);
 }
 
-/* ========================= */
-/* MODAL AGREGAR TARJETA     */
-/* (AGREGADO SIN TOCAR NADA) */
-/* ========================= */
-
+/* MODAL */
 .modal{
   position:fixed;
   inset:0;
@@ -204,11 +200,8 @@ body.dark .modal-content{
   background:#1a1a1f;
 }
 
-.modal-content h2{
-  margin-top:0;
-}
-
-.modal-content input{
+.modal-content input,
+.modal-content select{
   width:100%;
   padding:12px;
   margin-top:10px;
@@ -243,9 +236,7 @@ body.dark .modal-content{
   <p>Gestiona tus tarjetas desde la comodidad de CM Card</p>
 </div>
 
-<div class="theme-btn" onclick="toggleTheme()">
-  <img id="themeIcon" src="moon.PNG">
-</div>
+<div class="theme-btn" onclick="toggleTheme()"></div>
 
 <div class="main">
   <div class="placeholder">
@@ -261,56 +252,32 @@ body.dark .modal-content{
     <img src="agregar.PNG">
   </div>
 
-  <div class="tab-icon-btn tab-action" onclick="openActions()">
+  <div class="tab-icon-btn tab-action">
     <img src="acciones.PNG">
   </div>
 
-  <div class="tab-icon-btn" onclick="openSettings()">
+  <div class="tab-icon-btn">
     <img src="ajustes.PNG">
   </div>
 </div>
 
-<!-- MODAL -->
-<!-- MODAL -->
 <div id="cardModal" class="modal">
   <div class="modal-content">
     <h2>Agregar tarjeta</h2>
 
     <input type="text" placeholder="Titular">
+    <input id="cardNumber" type="text" placeholder="Número de tarjeta" maxlength="16">
+    <input id="expiry" type="text" placeholder="Vencimiento (MM/YY)" maxlength="5">
+    <input id="pin" type="text" placeholder="PIN" maxlength="4">
 
-    <input
-      id="cardNumber"
-      type="text"
-      placeholder="Número de tarjeta"
-      maxlength="16"
-    >
-
-    <input
-      id="expiry"
-      type="text"
-      placeholder="Vencimiento (MM/YY)"
-      maxlength="5"
-    >
-
-    <input
-      id="pin"
-      type="text"
-      placeholder="PIN"
-      maxlength="4"
-    >
-
-    <select id="currency" style="margin-top:10px;width:100%;padding:12px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--text);">
+    <select id="currency">
       <option value="">Seleccionar moneda</option>
       <option>USD</option>
       <option>EUR</option>
       <option>CUP</option>
     </select>
 
-    <input
-      id="phone"
-      type="text"
-      placeholder="Número de celular"
-    >
+    <input id="phone" type="text" placeholder="Número de celular">
 
     <div class="modal-actions">
       <button onclick="closeModal()">Cancelar</button>
@@ -321,36 +288,20 @@ body.dark .modal-content{
 
 <script>
 function toggleTheme(){
-  const btn = document.querySelector(".theme-btn");
-  btn.style.transform = "scale(0.9)";
-  setTimeout(() => {
-    document.body.classList.toggle("dark");
-    syncThemeIcon();
-    btn.style.transform = "scale(1)";
-  }, 220);
+  document.body.classList.toggle("dark");
+  syncThemeIcon();
 }
 
 function syncThemeIcon(){
   const btn = document.querySelector(".theme-btn");
-  const isDark = document.body.classList.contains("dark");
-  btn.style.backgroundImage = isDark
-    ? "url('sun.PNG')"
-    : "url('moon.PNG')";
+  btn.style.backgroundImage =
+    document.body.classList.contains("dark")
+      ? "url('sun.PNG')"
+      : "url('moon.PNG')";
 }
 
-document.addEventListener("DOMContentLoaded", syncThemeIcon);
-
-/* FUNCIONES AGREGADAS */
-function openModal(){
-  document.getElementById("cardModal").classList.add("show");
-}
-
-function closeModal(){
-  document.getElementById("cardModal").classList.remove("show");
-}
-<script>
-/* VALIDACIONES MODAL AGREGAR TARJETA */
 document.addEventListener("DOMContentLoaded", () => {
+  syncThemeIcon();
 
   const cardNumber = document.getElementById("cardNumber");
   const expiry = document.getElementById("expiry");
@@ -361,33 +312,33 @@ document.addEventListener("DOMContentLoaded", () => {
     el.value = el.value.replace(/\D/g,'');
   }
 
-  /* Número de tarjeta – 16 dígitos */
   cardNumber.addEventListener("input", () => {
     onlyNumbers(cardNumber);
     cardNumber.value = cardNumber.value.slice(0,16);
   });
 
-  /* PIN – 4 dígitos */
   pin.addEventListener("input", () => {
     onlyNumbers(pin);
     pin.value = pin.value.slice(0,4);
   });
 
-  /* Teléfono – solo números */
   phone.addEventListener("input", () => {
     onlyNumbers(phone);
   });
 
-  /* Vencimiento – MM/YY automático */
   expiry.addEventListener("input", () => {
     let v = expiry.value.replace(/\D/g,'').slice(0,4);
-    expiry.value = v.length > 2
-      ? v.slice(0,2) + "/" + v.slice(2)
-      : v;
+    expiry.value = v.length > 2 ? v.slice(0,2)+"/"+v.slice(2) : v;
   });
-
 });
-</script>
+
+function openModal(){
+  document.getElementById("cardModal").classList.add("show");
+}
+
+function closeModal(){
+  document.getElementById("cardModal").classList.remove("show");
+}
 </script>
 
 </body>
