@@ -21,8 +21,6 @@
   --text:#000;
   --border:#e5e5ea;
   --primary:#5b5bf7;
-  --card1:#0f9d58;
-  --card2:#0b7a44;
 }
 
 body.dark{
@@ -36,7 +34,6 @@ body{
   font-family:-apple-system,BlinkMacSystemFont;
   background:var(--bg);
   color:var(--text);
-  transition:.3s;
 }
 
 /* HEADER */
@@ -44,28 +41,12 @@ body{
   padding:25px 20px 10px;
 }
 
-.header small{
-  opacity:.6;
-  font-size:14px;
-}
-
-.header h1{
-  margin:4px 0;
-  font-size:30px;
-}
-
-.header p{
-  opacity:.6;
-  font-size:14px;
-}
-
-/* MAIN CARD */
+/* MAIN */
 .main{
   margin:20px;
   background:#fff;
   border-radius:24px;
   padding:30px 20px;
-  box-shadow:0 15px 40px rgba(0,0,0,.08);
   min-height:280px;
 }
 
@@ -73,35 +54,7 @@ body.dark .main{
   background:#1a1a1f;
 }
 
-.placeholder{
-  text-align:center;
-  opacity:.7;
-}
-
-.placeholder .icon{
-  width:80px;
-  height:80px;
-  border-radius:50%;
-  background:#f1f1f4;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin:0 auto 15px;
-  font-size:32px;
-}
-
-.primary-btn{
-  margin-top:20px;
-  background:var(--primary);
-  border:none;
-  color:#fff;
-  padding:14px 22px;
-  border-radius:18px;
-  font-size:16px;
-  cursor:pointer;
-}
-
-/* TAB BAR */
+/* TAB BAR (NO TOCADA) */
 .tabbar{
   position:fixed;
   bottom:20px;
@@ -113,14 +66,12 @@ body.dark .main{
   padding:12px 22px;
   display:flex;
   gap:26px;
-  box-shadow:0 20px 40px rgba(0,0,0,.18);
 }
 
 body.dark .tabbar{
   background:rgba(30,30,35,.7);
 }
 
-/* BOTONES TAB */
 .tab-icon-btn{
   width:52px;
   height:52px;
@@ -144,39 +95,7 @@ body.dark .tabbar{
   margin-top:-12px;
 }
 
-/* BOTÓN MODO */
-.theme-btn{
-  position:absolute;
-  top:28px;
-  right:20px;
-  width:64px;
-  height:64px;
-  border-radius:22px;
-  background-size:cover;
-  background-position:center;
-  background-repeat:no-repeat;
-  backdrop-filter:blur(26px);
-  -webkit-backdrop-filter:blur(26px);
-  box-shadow:
-    0 14px 34px rgba(0,0,0,.18),
-    inset 0 1px 1px rgba(255,255,255,.45);
-  cursor:pointer;
-  transition:transform .25s ease;
-}
-
-.theme-btn img{
-  display:none;
-}
-
-.theme-btn:active{
-  transform:scale(.92);
-}
-
-/* ========================= */
-/* MODAL AGREGAR TARJETA     */
-/* (AGREGADO SIN TOCAR NADA) */
-/* ========================= */
-
+/* MODAL */
 .modal{
   position:fixed;
   inset:0;
@@ -197,24 +116,37 @@ body.dark .tabbar{
   max-width:340px;
   border-radius:22px;
   padding:24px;
-  box-shadow:0 20px 50px rgba(0,0,0,.25);
 }
 
 body.dark .modal-content{
   background:#1a1a1f;
 }
 
-.modal-content h2{
-  margin-top:0;
+.form-group{
+  margin-top:10px;
 }
 
-.modal-content input{
+.form-group input,
+.form-group select{
   width:100%;
   padding:12px;
-  margin-top:10px;
   border-radius:14px;
   border:1px solid var(--border);
-  font-size:15px;
+  background:transparent;
+  color:var(--text);
+}
+
+.form-row{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+
+.form-row input{
+  flex:1;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid var(--border);
   background:transparent;
   color:var(--text);
 }
@@ -230,7 +162,11 @@ body.dark .modal-content{
   padding:12px;
   border-radius:14px;
   border:none;
-  cursor:pointer;
+}
+
+.primary-btn{
+  background:var(--primary);
+  color:#fff;
 }
 </style>
 </head>
@@ -243,30 +179,22 @@ body.dark .modal-content{
   <p>Gestiona tus tarjetas desde la comodidad de CM Card</p>
 </div>
 
-<div class="theme-btn" onclick="toggleTheme()">
-  <img id="themeIcon" src="moon.PNG">
-</div>
-
 <div class="main">
-  <div class="placeholder">
-    <div class="icon">💳</div>
-    <h3>No tienes tarjetas</h3>
-    <p>Agrega tu primera tarjeta magnética para comenzar a usarla</p>
-    <button class="primary-btn" onclick="openModal()">+ Agregar Tarjeta</button>
-  </div>
+  <button class="primary-btn" onclick="openModal()">+ Agregar Tarjeta</button>
 </div>
 
+<!-- TAB BAR RESTAURADA -->
 <div class="tabbar">
   <div class="tab-icon-btn" onclick="openModal()">
-    <img src="agregar.png">
+    <img src="agregar.PNG">
   </div>
 
   <div class="tab-icon-btn tab-action" onclick="openActions()">
-    <img src="acciones.png">
+    <img src="acciones.PNG">
   </div>
 
   <div class="tab-icon-btn" onclick="openSettings()">
-    <img src="ajustes.png">
+    <img src="ajustes.PNG">
   </div>
 </div>
 
@@ -274,10 +202,32 @@ body.dark .modal-content{
 <div id="cardModal" class="modal">
   <div class="modal-content">
     <h2>Agregar tarjeta</h2>
-    <input type="text" placeholder="Titular">
-    <input type="text" placeholder="Número de tarjeta">
-    <input type="text" placeholder="Vencimiento">
-    <input type="text" placeholder="CVV">
+
+    <div class="form-group">
+      <input type="text" placeholder="Titular">
+    </div>
+
+    <div class="form-group">
+      <input id="cardNumber" type="text" placeholder="Número de tarjeta" maxlength="16">
+    </div>
+
+    <div class="form-row">
+      <input id="expiry" type="text" placeholder="MM/YY" maxlength="5">
+      <input id="cvv" type="text" placeholder="PIN" maxlength="4">
+    </div>
+
+    <div class="form-group">
+      <select>
+        <option value="">Moneda</option>
+        <option>USD</option>
+        <option>EUR</option>
+        <option>CUP</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <input id="phone" type="text" placeholder="Número de celular">
+    </div>
 
     <div class="modal-actions">
       <button onclick="closeModal()">Cancelar</button>
@@ -287,27 +237,6 @@ body.dark .modal-content{
 </div>
 
 <script>
-function toggleTheme(){
-  const btn = document.querySelector(".theme-btn");
-  btn.style.transform = "scale(0.9)";
-  setTimeout(() => {
-    document.body.classList.toggle("dark");
-    syncThemeIcon();
-    btn.style.transform = "scale(1)";
-  }, 220);
-}
-
-function syncThemeIcon(){
-  const btn = document.querySelector(".theme-btn");
-  const isDark = document.body.classList.contains("dark");
-  btn.style.backgroundImage = isDark
-    ? "url('sun.PNG')"
-    : "url('moon.PNG')";
-}
-
-document.addEventListener("DOMContentLoaded", syncThemeIcon);
-
-/* FUNCIONES AGREGADAS */
 function openModal(){
   document.getElementById("cardModal").classList.add("show");
 }
@@ -315,6 +244,29 @@ function openModal(){
 function closeModal(){
   document.getElementById("cardModal").classList.remove("show");
 }
+
+function onlyNumbers(input){
+  input.value = input.value.replace(/\D/g,'');
+}
+
+cardNumber.addEventListener("input",()=>{
+  onlyNumbers(cardNumber);
+  cardNumber.value = cardNumber.value.slice(0,16);
+});
+
+cvv.addEventListener("input",()=>{
+  onlyNumbers(cvv);
+  cvv.value = cvv.value.slice(0,4);
+});
+
+phone.addEventListener("input",()=>{
+  onlyNumbers(phone);
+});
+
+expiry.addEventListener("input",()=>{
+  let v = expiry.value.replace(/\D/g,'').slice(0,4);
+  expiry.value = v.length > 2 ? v.slice(0,2)+"/"+v.slice(2) : v;
+});
 </script>
 
 </body>
