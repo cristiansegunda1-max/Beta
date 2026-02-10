@@ -120,52 +120,56 @@ body.dark .tabbar{
   background:rgba(30,30,35,.7);
 }
 
-.tab-item{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  font-size:18px;
-  opacity:.75;
-}
-
-.tab-add{
-  width:56px;
-  height:56px;
-  background:#7b7cff;
-  color:white;
-  font-size:34px;
+/* 🔘 BOTONES CON IMÁGENES */
+.tab-icon-btn{
+  width:52px;
+  height:52px;
+  border-radius:16px;
   display:flex;
   align-items:center;
   justify-content:center;
-  border-radius:18px;
+  cursor:pointer;
 }
 
-/* 🌙 BOTÓN DE MODO → EL BOTÓN ES LA FOTO */
+.tab-icon-btn img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  transition:transform .2s ease;
+}
+
+.tab-icon-btn:active img{
+  transform:scale(.9);
+}
+
+/* ⭐ BOTÓN CENTRAL ACCIONES */
+.tab-action{
+  width:68px;
+  height:68px;
+  border-radius:20px;
+  margin-top:-12px;
+}
+
+/* 🌙 BOTÓN DE MODO */
 .theme-btn{
   position:absolute;
   top:28px;
   right:20px;
-
   width:64px;
   height:64px;
   border-radius:22px;
-
   background-size:cover;
   background-position:center;
   background-repeat:no-repeat;
-
   backdrop-filter:blur(26px);
   -webkit-backdrop-filter:blur(26px);
-
   box-shadow:
     0 14px 34px rgba(0,0,0,.18),
     inset 0 1px 1px rgba(255,255,255,.45);
-
   cursor:pointer;
   transition:transform .25s ease;
 }
 
-/* La imagen interna NO se muestra */
 .theme-btn img{
   display:none;
 }
@@ -198,16 +202,29 @@ body.dark .tabbar{
   </div>
 </div>
 
+<!-- TAB BAR INFERIOR -->
 <div class="tabbar">
-  <div class="tab-item" onclick="openSettings()">⚙️<span>Ajustes</span></div>
-  <div class="tab-add" onclick="openModal()">＋</div>
-  <div class="tab-item" onclick="openActions()">⚡<span>Acciones</span></div>
+
+  <!-- AGREGAR -->
+  <div class="tab-icon-btn" onclick="openModal()">
+    <img src="agregar.png" alt="Agregar">
+  </div>
+
+  <!-- ACCIONES (CENTRAL) -->
+  <div class="tab-icon-btn tab-action" onclick="openActions()">
+    <img src="acciones.png" alt="Acciones">
+  </div>
+
+  <!-- AJUSTES -->
+  <div class="tab-icon-btn" onclick="openSettings()">
+    <img src="ajustes.png" alt="Ajustes">
+  </div>
+
 </div>
 
 <script>
 function toggleTheme(){
   const btn = document.querySelector(".theme-btn");
-
   btn.style.transform = "scale(0.9)";
 
   setTimeout(() => {
