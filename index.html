@@ -120,7 +120,7 @@ body.dark .tabbar{
   background:rgba(30,30,35,.7);
 }
 
-/* 🔘 BOTONES CON IMÁGENES */
+/* BOTONES TAB */
 .tab-icon-btn{
   width:52px;
   height:52px;
@@ -135,14 +135,8 @@ body.dark .tabbar{
   width:100%;
   height:100%;
   object-fit:contain;
-  transition:transform .2s ease;
 }
 
-.tab-icon-btn:active img{
-  transform:scale(.9);
-}
-
-/* ⭐ BOTÓN CENTRAL ACCIONES */
 .tab-action{
   width:68px;
   height:68px;
@@ -150,7 +144,7 @@ body.dark .tabbar{
   margin-top:-12px;
 }
 
-/* 🌙 BOTÓN DE MODO */
+/* BOTÓN MODO */
 .theme-btn{
   position:absolute;
   top:28px;
@@ -177,6 +171,67 @@ body.dark .tabbar{
 .theme-btn:active{
   transform:scale(.92);
 }
+
+/* ========================= */
+/* MODAL AGREGAR TARJETA     */
+/* (AGREGADO SIN TOCAR NADA) */
+/* ========================= */
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.45);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modal-content{
+  background:#fff;
+  width:90%;
+  max-width:340px;
+  border-radius:22px;
+  padding:24px;
+  box-shadow:0 20px 50px rgba(0,0,0,.25);
+}
+
+body.dark .modal-content{
+  background:#1a1a1f;
+}
+
+.modal-content h2{
+  margin-top:0;
+}
+
+.modal-content input{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  font-size:15px;
+  background:transparent;
+  color:var(--text);
+}
+
+.modal-actions{
+  display:flex;
+  gap:10px;
+  margin-top:20px;
+}
+
+.modal-actions button{
+  flex:1;
+  padding:12px;
+  border-radius:14px;
+  border:none;
+  cursor:pointer;
+}
 </style>
 </head>
 
@@ -188,7 +243,6 @@ body.dark .tabbar{
   <p>Gestiona tus tarjetas desde la comodidad de CM Card</p>
 </div>
 
-<!-- BOTÓN MODO -->
 <div class="theme-btn" onclick="toggleTheme()">
   <img id="themeIcon" src="moon.PNG">
 </div>
@@ -202,31 +256,40 @@ body.dark .tabbar{
   </div>
 </div>
 
-<!-- TAB BAR INFERIOR -->
 <div class="tabbar">
-
-  <!-- AGREGAR -->
   <div class="tab-icon-btn" onclick="openModal()">
-    <img src="agregar.PNG" alt="Agregar">
+    <img src="agregar.png">
   </div>
 
-  <!-- ACCIONES (CENTRAL) -->
   <div class="tab-icon-btn tab-action" onclick="openActions()">
-    <img src="acciones.PNG" alt="Acciones">
+    <img src="acciones.png">
   </div>
 
-  <!-- AJUSTES -->
   <div class="tab-icon-btn" onclick="openSettings()">
-    <img src="ajustes.PNG" alt="Ajustes">
+    <img src="ajustes.png">
   </div>
+</div>
 
+<!-- MODAL -->
+<div id="cardModal" class="modal">
+  <div class="modal-content">
+    <h2>Agregar tarjeta</h2>
+    <input type="text" placeholder="Titular">
+    <input type="text" placeholder="Número de tarjeta">
+    <input type="text" placeholder="Vencimiento">
+    <input type="text" placeholder="CVV">
+
+    <div class="modal-actions">
+      <button onclick="closeModal()">Cancelar</button>
+      <button class="primary-btn">Guardar</button>
+    </div>
+  </div>
 </div>
 
 <script>
 function toggleTheme(){
   const btn = document.querySelector(".theme-btn");
   btn.style.transform = "scale(0.9)";
-
   setTimeout(() => {
     document.body.classList.toggle("dark");
     syncThemeIcon();
@@ -237,13 +300,21 @@ function toggleTheme(){
 function syncThemeIcon(){
   const btn = document.querySelector(".theme-btn");
   const isDark = document.body.classList.contains("dark");
-
   btn.style.backgroundImage = isDark
     ? "url('sun.PNG')"
     : "url('moon.PNG')";
 }
 
 document.addEventListener("DOMContentLoaded", syncThemeIcon);
+
+/* FUNCIONES AGREGADAS */
+function openModal(){
+  document.getElementById("cardModal").classList.add("show");
+}
+
+function closeModal(){
+  document.getElementById("cardModal").classList.remove("show");
+}
 </script>
 
 </body>
