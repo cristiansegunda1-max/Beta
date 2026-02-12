@@ -362,8 +362,11 @@ body.dark .placeholder{
   position: absolute;
   top: 20px;
   left: 20px;
-  width: 40px;
-  height: 40px;
+  width: 95px;
+  height: auto;
+  object-fit: contain;
+  opacity: 0.95;
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,0.3));
 }
 
 .card h3 {
@@ -646,7 +649,7 @@ function renderCards(){
 
     card.innerHTML = `
       <img src="logo.png" class="card-icon">
-      <div style="margin-top:50px">
+      <div style="margin-top:100px">
         <h3>${tarjeta.titular}</h3>
         <p>•••• •••• •••• ${last4}</p>
         <p>Vence: ${tarjeta.expiry}</p>
