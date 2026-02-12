@@ -66,7 +66,7 @@ body{
 .main{
   min-height:calc(100vh - 160px);
   display:flex;
-  align-items:flex-start;
+  align-items:center;
   justify-content:center;
   padding:20px 20px 20px 20px;
 }
@@ -327,6 +327,24 @@ body.dark .placeholder{
 #cardModal .modal-content{
   padding:30px 28px 30px 20px;
 }
+/* ========================= */
+/* CARRUSEL HORIZONTAL WALLET */
+/* ========================= */
+
+#cards{
+  display:flex;
+  flex-direction:row;
+  gap:20px;
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
+  padding:20px 10px;
+  scroll-behavior:smooth;
+  perspective:1200px;
+}
+
+#cards::-webkit-scrollbar{
+  display:none;
+}
 .card {
   position: relative;
   width: 320px;
@@ -345,6 +363,10 @@ body.dark .placeholder{
   justify-content: space-between;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   animation: floatCard 4s ease-in-out infinite;
+  scroll-snap-align:center;
+flex:0 0 85%;
+transition: transform .35s cubic-bezier(.22,1,.36,1);
+transform-style:preserve-3d;
 }
 
 .card:hover {
@@ -713,6 +735,37 @@ if ("serviceWorker" in navigator) {
       .catch(err => console.log("Error SW:", err));
   });
 }
+/* ========================= */
+/* EFECTO WALLET DINÁMICO 3D */
+/* ========================= */
+
+const cardsContainer = document.getElementById("cards");
+
+function updateCardEffects() {
+  const cards = document.querySelectorAll(".card");
+  const containerCenter = cardsContainer.offsetWidth / 2;
+
+  cards.forEach(card => {
+    const rect = card.getBoundingClientRect();
+    const cardCenter = rect.left + rect.width / 2;
+    const offset = cardCenter - containerCenter;
+
+    const distance = Math.abs(offset);
+    const maxDistance = containerCenter;
+
+    const scale = 1 - Math.min(distance / maxDistance, 0.3);
+    const rotateY = offset / 20;
+
+    card.style.transform = `
+      scale(${scale})
+      rotateY(${rotateY}deg)
+    `;
+  });
+}
+
+cardsContainer.addEventListener("scroll", updateCardEffects);
+window.addEventListener("load", updateCardEffects);
+window.addEventListener("resize", updateCardEffects);
 </script>
 
 </body>
