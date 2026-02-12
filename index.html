@@ -475,6 +475,13 @@ body.dark .card .card-actions button:first-child {
 </div>
 
 <script>
+let tarjetas = JSON.parse(localStorage.getItem("tarjetas")) || [];
+let editingIndex = null;
+
+/* ========================= */
+/* THEME */
+/* ========================= */
+
 function toggleTheme(){
   document.body.classList.toggle("dark");
   syncThemeIcon();
@@ -488,8 +495,26 @@ function syncThemeIcon(){
       : "url('moon.PNG')";
 }
 
+/* ========================= */
+/* MODAL */
+/* ========================= */
+
+function openModal(){
+  document.getElementById("cardModal").classList.add("show");
+}
+
+function closeModal(){
+  document.getElementById("cardModal").classList.remove("show");
+}
+
+/* ========================= */
+/* FORM VALIDATION */
+/* ========================= */
+
 document.addEventListener("DOMContentLoaded", () => {
+
   syncThemeIcon();
+  renderCards();
 
   const cardNumber = document.getElementById("cardNumber");
   const expiry = document.getElementById("expiry");
@@ -518,24 +543,67 @@ document.addEventListener("DOMContentLoaded", () => {
     let v = expiry.value.replace(/\D/g,'').slice(0,4);
     expiry.value = v.length > 2 ? v.slice(0,2)+"/"+v.slice(2) : v;
   });
+
 });
 
-function openModal(){
-  document.getElementById("cardModal").classList.add("show");
+/* ========================= */
+/* GUARDAR TARJETA */
+/* ========================= */
+
+function guardarTarjeta(){
+
+  const titular = document.querySelector("#cardModal input[placeholder='Titular']").value.trim();
+  const cardNumber = document.getElementById("cardNumber").value.trim();
+  const expiry = document.getElementById("expiry").value.trim();
+  const pin = document.getElementById("pin").value.trim();
+  const currency = document.getElementById("currency").value;
+  const phone = document.getElementById("phone").value.trim();
+
+  if(!titular || !cardNumber || !expiry || !pin || !currency || !phone){
+    alert("Completa todos los campos");
+    return;
+  }
+
+  const nuevaTarjeta = { titular, cardNumber, expiry, pin, currency, phone };
+
+  if(editingIndex !== null){
+    tarjetas[editingIndex] = nuevaTarjeta;
+    editingIndex = null;
+  } else {
+    tarjetas.push(nuevaTarjeta);
+  }
+
+  localStorage.setItem("tarjetas", JSON.stringify(tarjetas));
+
+  limpiarFormulario();
+  closeModal();
+  renderCards();
 }
 
-function closeModal(){
-  document.getElementById("cardModal").classList.remove("show");
+/* ========================= */
+/* LIMPIAR FORM */
+/* ========================= */
+
+function limpiarFormulario(){
+  document.querySelector("#cardModal input[placeholder='Titular']").value = "";
+  document.getElementById("cardNumber").value = "";
+  document.getElementById("expiry").value = "";
+  document.getElementById("pin").value = "";
+  document.getElementById("currency").value = "";
+  document.getElementById("phone").value = "";
 }
-// Guardar tarjetas en localStorage
-let tarjetas = JSON.parse(localStorage.getItem("tarjetas")) || [];
-// FUNCION RENDER CARDS PREMIUM
-function renderCards() {
-  const cardsContainer = document.getElementById("cards");
-  cardsContainer.innerHTML = "";
+
+/* ========================= */
+/* RENDER CARDS PREMIUM */
+/* ========================= */
+
+function renderCards(){
+
+  const container = document.getElementById("cards");
+  container.innerHTML = "";
 
   if(tarjetas.length === 0){
-    cardsContainer.innerHTML = `
+    container.innerHTML = `
       <div class="placeholder">
         <div class="icon">💳</div>
         <h3>No tienes tarjetas</h3>
@@ -547,25 +615,96 @@ function renderCards() {
   }
 
   tarjetas.forEach((tarjeta, index) => {
-    const cardEl = document.createElement("div");
-    cardEl.classList.add("card");
-    cardEl.innerHTML = `
+
+    const card = document.createElement("div");
+    card.classList.add("card");
+
+    /* ===== 1️⃣ GRADIENTE DINÁMICO SEGÚN MONEDA ===== */
+
+    let gradient;
+
+    switch(tarjeta.currency){
+      case "USD":
+        gradient = "linear-gradient(135deg,#1e3c72,#2a5298)";
+        break;
+      case "EUR":
+        gradient = "linear-gradient(135deg,#42275a,#734b6d)";
+        break;
+      case "CUP":
+        gradient = "linear-gradient(135deg,#134e5e,#71b280)";
+        break;
+      default:
+        gradient = "linear-gradient(135deg,#5b5bf7,#7a6df9)";
+    }
+
+    card.style.background = gradient;
+    card.style.color = "#fff";
+
+    /* ===== 2️⃣ SOLO ÚLTIMOS 4 DÍGITOS ===== */
+
+    const last4 = tarjeta.cardNumber.slice(-4);
+
+    card.innerHTML = `
       <img src="icon.png" class="card-icon">
-      <h3>${tarjeta.titular}</h3>
-      <p>${tarjeta.cardNumber.replace(/(\d{4})(?=\d)/g, '$1 ')}</p>
-      <p>Vence: ${tarjeta.expiry} | Moneda: ${tarjeta.currency}</p>
-      <p>Tel: ${tarjeta.phone}</p>
+      <div style="margin-top:50px">
+        <h3>${tarjeta.titular}</h3>
+        <p>•••• •••• •••• ${last4}</p>
+        <p>Vence: ${tarjeta.expiry}</p>
+        <p>${tarjeta.currency}</p>
+      </div>
       <div class="card-actions">
         <button onclick="editCard(${index})">Editar</button>
         <button onclick="deleteCard(${index})">Eliminar</button>
       </div>
     `;
-    cardsContainer.appendChild(cardEl);
+
+    /* ===== 4️⃣ ANIMACIÓN TIPO WALLET AL APARECER ===== */
+
+    card.style.opacity = "0";
+    card.style.transform = "translateY(40px) scale(0.95)";
+    card.style.transition = "all .4s cubic-bezier(.25,.8,.25,1)";
+
+    setTimeout(() => {
+      card.style.opacity = "1";
+      card.style.transform = "translateY(0px) scale(1)";
+    }, 100);
+
+    container.appendChild(card);
+
   });
 }
 
-// Inicializar
-renderCards();
+/* ========================= */
+/* EDITAR */
+/* ========================= */
+
+function editCard(index){
+
+  const tarjeta = tarjetas[index];
+  editingIndex = index;
+
+  document.querySelector("#cardModal input[placeholder='Titular']").value = tarjeta.titular;
+  document.getElementById("cardNumber").value = tarjeta.cardNumber;
+  document.getElementById("expiry").value = tarjeta.expiry;
+  document.getElementById("pin").value = tarjeta.pin;
+  document.getElementById("currency").value = tarjeta.currency;
+  document.getElementById("phone").value = tarjeta.phone;
+
+  openModal();
+}
+
+/* ========================= */
+/* ELIMINAR */
+/* ========================= */
+
+function deleteCard(index){
+
+  if(confirm("¿Eliminar esta tarjeta?")){
+    tarjetas.splice(index,1);
+    localStorage.setItem("tarjetas", JSON.stringify(tarjetas));
+    renderCards();
+  }
+}
 </script>
 
 </body>
