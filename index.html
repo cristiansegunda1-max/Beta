@@ -92,6 +92,10 @@ body{
     inset 0 1px 1px rgba(255,255,255,.6);
   text-align:center;
   animation:modalPop .25s ease;
+
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
 }
 
 body.dark .modal-content{
@@ -113,7 +117,6 @@ body.dark .modal-content{
   margin:0 0 18px 0;
   font-size:22px;
   font-weight:600;
-  text-align:center;
 }
 
 .modal-content input,
@@ -247,60 +250,6 @@ body.dark .tabbar{
 
 .theme-btn:active{
   transform:scale(.92);
-}
-
-/* MODAL */
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.45);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:999;
-}
-
-.modal.show{
-  display:flex;
-}
-
-.modal-content{
-  background:#fff;
-  width:90%;
-  max-width:340px;
-  border-radius:22px;
-  padding:24px;
-  box-shadow:0 20px 50px rgba(0,0,0,.25);
-}
-
-body.dark .modal-content{
-  background:#1a1a1f;
-}
-
-.modal-content input,
-.modal-content select{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border-radius:14px;
-  border:1px solid var(--border);
-  font-size:15px;
-  background:transparent;
-  color:var(--text);
-}
-
-.modal-actions{
-  display:flex;
-  gap:10px;
-  margin-top:20px;
-}
-
-.modal-actions button{
-  flex:1;
-  padding:12px;
-  border-radius:14px;
-  border:none;
-  cursor:pointer;
 }
 </style>
 </head>
