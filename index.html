@@ -60,6 +60,17 @@ body{
 }
 
 /* ========================= */
+/* MAIN STRUCTURE FIX (NO CAMBIA TU DISEÑO) */
+/* ========================= */
+
+.main{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+/* ========================= */
 /* MODAL AGREGAR TARJETA PREMIUM */
 /* ========================= */
 
@@ -90,12 +101,13 @@ body{
   box-shadow:
     0 30px 80px rgba(0,0,0,.25),
     inset 0 1px 1px rgba(255,255,255,.6);
-  text-align:center;
   animation:modalPop .25s ease;
 
   display:flex;
   flex-direction:column;
   justify-content:center;
+  align-items:stretch;
+  gap:12px;
 }
 
 body.dark .modal-content{
@@ -114,16 +126,16 @@ body.dark .modal-content{
 }
 
 .modal-content h2{
-  margin:0 0 18px 0;
+  margin:0 0 10px 0;
   font-size:22px;
   font-weight:600;
+  text-align:center;
 }
 
 .modal-content input,
 .modal-content select{
   width:100%;
   padding:14px;
-  margin-top:12px;
   border-radius:18px;
   border:1px solid rgba(0,0,0,.08);
   font-size:15px;
@@ -149,7 +161,7 @@ body.dark .modal-content select{
 .modal-actions{
   display:flex;
   gap:14px;
-  margin-top:24px;
+  margin-top:18px;
 }
 
 .modal-actions button{
