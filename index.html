@@ -582,6 +582,8 @@ input:checked + .slider:before{
   <img src="ajustes.PNG">
 </div>
 
+</div> <!-- CIERRE DE TABBAR -->
+
 <div id="cardModal" class="modal">
   <div class="modal-content">
     <h2>Agregar tarjeta</h2>
@@ -613,9 +615,8 @@ input:checked + .slider:before{
 <!-- ========================= -->
 
 <div class="modal" id="settingsModal">
-  <div class="modal-content settings-box" id="settingsBox">
-
-    <button class="close-modal" onclick="closeSettings()">✕</button>
+  <div class="modal-content settings">
+<button class="close-modal" onclick="closeSettings()">✕</button>
     <h2 data-i18n="settingsTitle">Ajustes</h2>
 
     <!-- MODO OSCURO -->
@@ -661,11 +662,16 @@ function toggleTheme(){
 
 function syncThemeIcon(){
   const btn = document.querySelector(".theme-btn");
+  if(!btn) return;
+
   btn.style.backgroundImage =
     document.body.classList.contains("dark")
       ? "url('sun.PNG')"
       : "url('moon.PNG')";
 }
+
+// Esto hace que al cargar la página se sincronice solo
+document.addEventListener("DOMContentLoaded", syncThemeIcon);
 
 /* ========================= */
 /* MODAL */
@@ -677,6 +683,14 @@ function openModal(){
 
 function closeModal(){
   document.getElementById("cardModal").classList.remove("show");
+}
+
+function openSettings(){
+  document.getElementById("settingsModal").classList.add("show");
+}
+
+function closeSettings(){
+  document.getElementById("settingsModal").classList.remove("show");
 }
 
 /* ========================= */
@@ -938,6 +952,7 @@ const darkToggle = document.getElementById("darkToggle");
 darkToggle.addEventListener("change", function(){
   document.body.classList.toggle("dark", this.checked);
   localStorage.setItem("theme", this.checked ? "dark" : "light");
+  syncThemeIcon();
 });
 
 window.addEventListener("load", function(){
@@ -967,6 +982,8 @@ function setLanguage(lang){
     const key = el.getAttribute("data-i18n");
     el.textContent = translations[lang][key];
   });
+  
+  syncThemeIcon();
 
   document.getElementById("languageOptions").style.display="none";
   document.getElementById("languageBtn").textContent =
@@ -978,13 +995,9 @@ document.getElementById("languageBtn").addEventListener("click", function(){
   const box = document.getElementById("languageOptions");
   box.style.display = box.style.display === "flex" ? "none" : "flex";
 });
-function openSettings(){
-  document.getElementById("settingsModal").classList.add("show");
-}
 
-function closeSettings(){
-  document.getElementById("settingsModal").classList.remove("show");
-}
+
+
 </script>
 
 </body>
