@@ -578,9 +578,9 @@ input:checked + .slider:before{
     <img src="acciones.PNG">
   </div>
 
-  <div class="tab-icon-btn" id="openSettings()">
-    <img src="ajustes.PNG">
-  </div>
+<div class="tab-icon-btn" id="settingsBtn" onclick="openSettings()">
+  <img src="ajustes.PNG">
+</div>
 </div>
 
 <div id="cardModal" class="modal">
@@ -989,13 +989,7 @@ document.getElementById("languageBtn").addEventListener("click", function(){
   const box = document.getElementById("languageOptions");
   box.style.display = box.style.display === "flex" ? "none" : "flex";
 });
-function openSettings(){
-  document.getElementById("settingsModal").classList.add("show");
-}
 
-function closeSettings(){
-  document.getElementById("settingsModal").classList.remove("show");
-}
 </script>
 
 </body>
