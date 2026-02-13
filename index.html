@@ -937,13 +937,6 @@ document.getElementById("settingsBtn").addEventListener("click", function(){
   document.getElementById("settingsModal").style.display = "flex";
 });
 
-window.addEventListener("click", function(e){
-  const modal = document.getElementById("settingsModal");
-  if(e.target === modal){
-    modal.style.display = "none";
-  }
-});
-
 const darkToggle = document.getElementById("darkToggle");
 
 darkToggle.addEventListener("change", function(){
