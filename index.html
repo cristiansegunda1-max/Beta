@@ -578,9 +578,8 @@ input:checked + .slider:before{
     <img src="acciones.PNG">
   </div>
 
-<div class="tab-icon-btn" id="settingsBtn" onclick="openSettings()">
+<div class="tab-icon-btn" onclick="openSettings()">
   <img src="ajustes.PNG">
-</div>
 </div>
 
 <div id="cardModal" class="modal">
@@ -933,8 +932,6 @@ blurBg.style.webkitBackdropFilter = `blur(${blurAmount}px)`;
 cardsContainer.addEventListener("scroll", updateCardEffects);
 window.addEventListener("load", updateCardEffects);
 window.addEventListener("resize", updateCardEffects);
-document.getElementById("settingsBtn").addEventListener("click", function(){
-  document.getElementById("settingsModal").style.display = "flex";
 });
 
 const darkToggle = document.getElementById("darkToggle");
@@ -982,7 +979,13 @@ document.getElementById("languageBtn").addEventListener("click", function(){
   const box = document.getElementById("languageOptions");
   box.style.display = box.style.display === "flex" ? "none" : "flex";
 });
+function openSettings(){
+  document.getElementById("settingsModal").classList.add("show");
+}
 
+function closeSettings(){
+  document.getElementById("settingsModal").classList.remove("show");
+}
 </script>
 
 </body>
