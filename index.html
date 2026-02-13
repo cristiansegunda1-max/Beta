@@ -528,6 +528,22 @@ input:checked + .slider:before{
   font-size:12px;
   opacity:.6;
 }
+.close-modal {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--text);
+  transition: transform 0.2s;
+}
+
+.close-modal:active {
+  transform: scale(0.9);
+}
 </style>
 </head>
 
@@ -562,7 +578,7 @@ input:checked + .slider:before{
     <img src="acciones.PNG">
   </div>
 
-  <div class="tab-icon-btn" id="settingsBtn">
+  <div class="tab-icon-btn" id="openSettings()">
     <img src="ajustes.PNG">
   </div>
 </div>
@@ -589,14 +605,18 @@ input:checked + .slider:before{
       <button onclick="closeModal()">Cancelar</button>
    <button class="primary-btn" onclick="guardarTarjeta()">Guardar</button>
     </div>
-  </div>
-  <!-- ========================= -->
+ 
+   </div>
+ </div>
+
+ <!-- ========================= -->
 <!-- MODAL AJUSTES -->
 <!-- ========================= -->
 
 <div class="modal" id="settingsModal">
-  <div class="modal-content settings-box">
+  <div class="modal-content settings-box" id="settingsBox">
 
+    <button class="close-modal" onclick="closeSettings()">✕</button>
     <h2 data-i18n="settingsTitle">Ajustes</h2>
 
     <!-- MODO OSCURO -->
@@ -625,7 +645,7 @@ input:checked + .slider:before{
 
   </div>
 </div>
-</div>
+
 
 <script>
 let tarjetas = JSON.parse(localStorage.getItem("tarjetas")) || [];
@@ -969,6 +989,13 @@ document.getElementById("languageBtn").addEventListener("click", function(){
   const box = document.getElementById("languageOptions");
   box.style.display = box.style.display === "flex" ? "none" : "flex";
 });
+function openSettings(){
+  document.getElementById("settingsModal").classList.add("show");
+}
+
+function closeSettings(){
+  document.getElementById("settingsModal").classList.remove("show");
+}
 </script>
 
 </body>
