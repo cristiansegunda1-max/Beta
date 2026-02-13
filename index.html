@@ -66,9 +66,25 @@ body{
 .main{
   min-height:calc(100vh - 160px);
   display:flex;
-  align-items:center;
+  align-items:flex-start; /* volvemos arriba */
   justify-content:center;
-  padding:20px 20px 20px 20px;
+  padding-top:40px;
+  position:relative;
+}
+
+.wallet-blur-bg{
+  position:absolute;
+  inset:0;
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(0px);
+  -webkit-backdrop-filter:blur(0px);
+  transition:backdrop-filter .4s ease;
+  z-index:0;
+}
+
+#cards{
+  position:relative;
+  z-index:2;
 }
 
 /* ========================= */
@@ -448,6 +464,7 @@ body.dark .card .card-actions button:first-child {
 <div class="theme-btn" onclick="toggleTheme()"></div>
 
 <div class="main">
+  <div class="wallet-blur-bg" id="walletBlur"></div>
   <div id="cards">
     <div class="placeholder">
       <div class="icon">💳</div>
@@ -740,6 +757,7 @@ if ("serviceWorker" in navigator) {
 /* ========================= */
 
 const cardsContainer = document.getElementById("cards");
+const blurBg = document.getElementById("walletBlur");
 
 function updateCardEffects() {
   const cards = document.querySelectorAll(".card");
@@ -761,6 +779,22 @@ function updateCardEffects() {
       rotateY(${rotateY}deg)
     `;
   });
+  let closestDistance = Infinity;
+
+cards.forEach(card => {
+  const rect = card.getBoundingClientRect();
+  const cardCenter = rect.left + rect.width / 2;
+  const offset = cardCenter - containerCenter;
+  const distance = Math.abs(offset);
+
+  if(distance < closestDistance){
+    closestDistance = distance;
+  }
+});
+
+const blurAmount = Math.min(closestDistance / 10, 20);
+blurBg.style.backdropFilter = `blur(${blurAmount}px)`;
+blurBg.style.webkitBackdropFilter = `blur(${blurAmount}px)`;
 }
 
 cardsContainer.addEventListener("scroll", updateCardEffects);
