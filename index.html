@@ -562,7 +562,7 @@ input:checked + .slider:before{
     <img src="acciones.PNG">
   </div>
 
-  <div class="tab-icon-btn">
+  <div class="tab-icon-btn" id="settingsBtn">
     <img src="ajustes.PNG">
   </div>
 </div>
@@ -913,6 +913,62 @@ blurBg.style.webkitBackdropFilter = `blur(${blurAmount}px)`;
 cardsContainer.addEventListener("scroll", updateCardEffects);
 window.addEventListener("load", updateCardEffects);
 window.addEventListener("resize", updateCardEffects);
+document.getElementById("settingsBtn").addEventListener("click", function(){
+  document.getElementById("settingsModal").style.display = "flex";
+});
+
+window.addEventListener("click", function(e){
+  const modal = document.getElementById("settingsModal");
+  if(e.target === modal){
+    modal.style.display = "none";
+  }
+});
+
+const darkToggle = document.getElementById("darkToggle");
+
+darkToggle.addEventListener("change", function(){
+  document.body.classList.toggle("dark", this.checked);
+  localStorage.setItem("theme", this.checked ? "dark" : "light");
+});
+
+window.addEventListener("load", function(){
+  const savedTheme = localStorage.getItem("theme");
+  if(savedTheme === "dark"){
+    document.body.classList.add("dark");
+    darkToggle.checked = true;
+  }
+  const savedLang = localStorage.getItem("language") || "es";
+setLanguage(savedLang);
+});
+
+const translations = {
+  es: {
+    settingsTitle: "Ajustes",
+    darkMode: "Modo Oscuro",
+    language: "Idioma"
+  },
+  en: {
+    settingsTitle: "Settings",
+    darkMode: "Dark Mode",
+    language: "Language"
+  }
+};
+function setLanguage(lang){
+  document.querySelectorAll("[data-i18n]").forEach(el=>{
+    const key = el.getAttribute("data-i18n");
+    el.textContent = translations[lang][key];
+  });
+
+  document.getElementById("languageOptions").style.display="none";
+  document.getElementById("languageBtn").textContent =
+    lang === "es" ? "Español" : "English";
+
+  localStorage.setItem("language", lang);
+}
+document.getElementById("languageBtn").addEventListener("click", function(){
+  const box = document.getElementById("languageOptions");
+  box.style.display = box.style.display === "flex" ? "none" : "flex";
+});
 </script>
 
 </body>
