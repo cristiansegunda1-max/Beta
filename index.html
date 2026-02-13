@@ -646,6 +646,30 @@ input:checked + .slider:before{
   </div>
 </div>
 
+<!-- ========================= -->
+<!-- MODAL ACCIONES -->
+<!-- ========================= -->
+
+<div class="modal" id="actionsModal">
+  <div class="modal-content settings-box">
+    
+    <button class="close-modal" onclick="closeActions()">✕</button>
+    <h2>Acciones</h2>
+
+    <div style="display:flex; flex-direction:column; gap:12px;">
+
+      <button onclick="runUSSD('*444*40*03#')">Autenticarse</button>
+      <button onclick="runUSSD('*444*46#')">Consultar Saldo</button>
+      <button onclick="runUSSD('*444*58#')">Consultar todas las cuentas</button>
+      <button onclick="runUSSD('*444*45#')">Enviar Transferencia</button>
+      <button onclick="runUSSD('*444*54#')">Recarga Movil</button>
+
+    </div>
+
+  </div>
+</div>
+
+
 
 <script>
 let tarjetas = JSON.parse(localStorage.getItem("tarjetas")) || [];
@@ -1029,28 +1053,6 @@ document.getElementById("languageBtn").addEventListener("click", function(){
   box.style.display = box.style.display === "flex" ? "none" : "flex";
 });
 
-<!-- ========================= -->
-<!-- MODAL ACCIONES -->
-<!-- ========================= -->
-
-<div class="modal" id="actionsModal">
-  <div class="modal-content settings-box">
-    
-    <button class="close-modal" onclick="closeActions()">✕</button>
-    <h2>Acciones</h2>
-
-    <div class="language-options" style="display:flex; flex-direction:column; gap:12px;">
-
-      <button onclick="runUSSD('*444*40*03#')">Autenticarse</button>
-      <button onclick="runUSSD('*444*46#')">Consultar Saldo</button>
-      <button onclick="runUSSD('*444*58#')">Consultar todas las cuentas</button>
-      <button onclick="runUSSD('*444*45#')">Enviar Transferencia</button>
-      <button onclick="runUSSD('*444*54#')">Recarga Movil</button>
-
-    </div>
-
-  </div>
-</div>
 
 </script>
 
