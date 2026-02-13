@@ -574,9 +574,9 @@ input:checked + .slider:before{
     <img src="agregar.PNG">
   </div>
 
-  <div class="tab-icon-btn tab-action">
-    <img src="acciones.PNG">
-  </div>
+<div class="tab-icon-btn tab-action" onclick="openActions()">
+  <img src="acciones.PNG">
+</div>
 
 <div class="tab-icon-btn" onclick="openSettings()">
   <img src="ajustes.PNG">
@@ -650,6 +650,7 @@ input:checked + .slider:before{
 <script>
 let tarjetas = JSON.parse(localStorage.getItem("tarjetas")) || [];
 let editingIndex = null;
+let selectedCardIndex = null;
 
 /* ========================= */
 /* THEME */
@@ -691,6 +692,25 @@ function openSettings(){
 
 function closeSettings(){
   document.getElementById("settingsModal").classList.remove("show");
+}
+
+function openActions(){
+  if(selectedCardIndex === null){
+    alert("Selecciona una tarjeta primero");
+    return;
+  }
+  document.getElementById("actionsModal").classList.add("show");
+}
+
+function closeActions(){
+  document.getElementById("actionsModal").classList.remove("show");
+}
+
+function runUSSD(code){
+  closeActions();
+
+  // Abre marcador con código USSD
+  window.location.href = "tel:" + encodeURIComponent(code);
 }
 
 /* ========================= */
@@ -804,6 +824,19 @@ function renderCards(){
 
     const card = document.createElement("div");
     card.classList.add("card");
+    card.addEventListener("click", function(e){
+
+  // Evita que se active si tocó editar o eliminar
+  if(e.target.tagName === "BUTTON") return;
+
+  selectedCardIndex = index;
+
+  document.querySelectorAll(".card").forEach(c=>{
+    c.style.outline = "none";
+  });
+
+  card.style.outline = "3px solid #ffffff";
+});
 
     /* ===== 1️⃣ GRADIENTE DINÁMICO SEGÚN MONEDA ===== */
 
@@ -996,7 +1029,28 @@ document.getElementById("languageBtn").addEventListener("click", function(){
   box.style.display = box.style.display === "flex" ? "none" : "flex";
 });
 
+<!-- ========================= -->
+<!-- MODAL ACCIONES -->
+<!-- ========================= -->
 
+<div class="modal" id="actionsModal">
+  <div class="modal-content settings-box">
+    
+    <button class="close-modal" onclick="closeActions()">✕</button>
+    <h2>Acciones</h2>
+
+    <div class="language-options" style="display:flex; flex-direction:column; gap:12px;">
+
+      <button onclick="runUSSD('*444*40*03#')">Autenticarse</button>
+      <button onclick="runUSSD('*444*46#')">Consultar Saldo</button>
+      <button onclick="runUSSD('*444*58#')">Consultar todas las cuentas</button>
+      <button onclick="runUSSD('*444*45#')">Enviar Transferencia</button>
+      <button onclick="runUSSD('*444*54#')">Recarga Movil</button>
+
+    </div>
+
+  </div>
+</div>
 
 </script>
 
