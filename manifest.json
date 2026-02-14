@@ -1,21 +1,39 @@
 {
-  "name": "CM Card",
+  "name": "CM Card Wallet",
   "short_name": "CM Card",
-  "description": "App de gestión de tarjetas digitales",
-  "start_url": ".",
+  "description": "Gestiona tus tarjetas bancarias de forma segura y rápida.",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "theme_color": "#5b5bf7",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "icon-192.PNG",
+      "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "icon-512.PNG",
+      "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Pantalla principal de CM Card"
     }
   ]
 }
