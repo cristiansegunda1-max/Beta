@@ -1345,6 +1345,57 @@ assistiveBtn.addEventListener("touchend", () => {
   isDragging = false;
 });
 
+document.addEventListener("DOMContentLoaded", function() {
+
+  const wrapper = document.getElementById("assistiveWrapper");
+  const btn = document.getElementById("assistiveBtn");
+  const options = document.getElementById("assistiveOptions");
+  const btnGenerar = document.getElementById("btnGenerarQR");
+  const btnEscanear = document.getElementById("btnEscanearQR");
+
+  if(!wrapper || !btn || !options) return;
+
+  let isDragging = false;
+  let holdTimer;
+
+  // TAP vs DRAG
+  btn.addEventListener("touchstart", function(e){
+    holdTimer = setTimeout(()=>{
+      isDragging = true;
+    }, 300);
+  });
+
+  btn.addEventListener("touchmove", function(e){
+    if(!isDragging) return;
+
+    wrapper.style.top = e.touches[0].clientY + "px";
+    wrapper.style.left = e.touches[0].clientX + "px";
+    wrapper.style.right = "auto";
+  });
+
+  btn.addEventListener("touchend", function(){
+    clearTimeout(holdTimer);
+
+    if(!isDragging){
+      options.classList.toggle("show");
+    }
+
+    isDragging = false;
+  });
+
+  // BOTONES
+  btnGenerar.addEventListener("click", function(){
+    options.classList.remove("show");
+    generarQR();
+  });
+
+  btnEscanear.addEventListener("click", function(){
+    options.classList.remove("show");
+    abrirScanner();
+  });
+
+});
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode"></script>
 </script>
