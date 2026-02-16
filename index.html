@@ -680,9 +680,64 @@ body.dark .scan-options button{
   background:rgba(255,255,255,.08);
 }
 
+#floatingScan{
+  position:fixed;
+  bottom:100px;
+  right:20px;
+  width:60px;
+  height:60px;
+  background:rgba(255,255,255,0.25);
+  backdrop-filter:blur(15px);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:26px;
+  cursor:pointer;
+  box-shadow:0 8px 20px rgba(0,0,0,0.2);
+  z-index:9999;
+  transition:transform 0.2s ease;
+}
+
+#floatingScan:active{
+  transform:scale(0.9);
+}
+
+#scanOptions{
+  position:fixed;
+  bottom:170px;
+  right:20px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  z-index:9999;
+}
+
+#scanOptions button{
+  background:rgba(255,255,255,0.3);
+  backdrop-filter:blur(15px);
+  border:none;
+  padding:10px 15px;
+  border-radius:20px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.2);
+}
+
+.hidden{
+  display:none;
+}
+
 </style>
 </head>
 
+<!-- BOTÓN FLOATING SCAN -->
+<div id="floatingScan">
+   📸
+</div>
+
+<div id="scanOptions" class="hidden">
+   <button onclick="generarQR()">Generar Código</button>
+   <button onclick="abrirScanner()">Escanear Código</button>
+</div>
 <body>
 
 <div class="header">
@@ -1254,8 +1309,6 @@ function toggleScanMenu(){
   document.getElementById("scanOptions").classList.toggle("show");
 }
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://unpkg.com/html5-qrcode"></script>
 
 /* ========================= */
 /* SCANNER QR */
@@ -1300,6 +1353,42 @@ function closeScanner(){
     html5QrCode.stop().catch(()=>{});
   }
 }
+
+/* ========================= */
+/* FLOATING BUTTON DRAG */
+/* ========================= */
+
+const floatingBtn = document.getElementById("floatingScan");
+const scanOptions = document.getElementById("scanOptions");
+
+let isDragging = false;
+let offsetX, offsetY;
+
+floatingBtn.addEventListener("touchstart", (e) => {
+  isDragging = true;
+  offsetX = e.touches[0].clientX - floatingBtn.offsetLeft;
+  offsetY = e.touches[0].clientY - floatingBtn.offsetTop;
+});
+
+floatingBtn.addEventListener("touchmove", (e) => {
+  if(!isDragging) return;
+
+  floatingBtn.style.left = (e.touches[0].clientX - offsetX) + "px";
+  floatingBtn.style.top = (e.touches[0].clientY - offsetY) + "px";
+  floatingBtn.style.right = "auto";
+  floatingBtn.style.bottom = "auto";
+});
+
+floatingBtn.addEventListener("touchend", () => {
+  isDragging = false;
+});
+
+floatingBtn.addEventListener("click", () => {
+  scanOptions.classList.toggle("hidden");
+});
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
 
 
 </script>
