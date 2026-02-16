@@ -604,6 +604,82 @@ body.dark #actionsModal button{
   border:1px solid rgba(255,255,255,.1);
 }
 
+/* ========================= */
+/* FLOAT SCAN BUTTON */
+/* ========================= */
+
+.scan-fab{
+  position:fixed;
+  bottom:110px;
+  right:20px;
+  z-index:999;
+}
+
+.scan-main{
+  width:70px;
+  height:70px;
+  border-radius:24px;
+  background:rgba(255,255,255,.2);
+  backdrop-filter:blur(25px);
+  -webkit-backdrop-filter:blur(25px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:26px;
+  cursor:pointer;
+  box-shadow:
+    0 20px 40px rgba(0,0,0,.25),
+    inset 0 1px 1px rgba(255,255,255,.6);
+  transition:.25s ease;
+}
+
+.scan-main:active{
+  transform:scale(.9);
+}
+
+body.dark .scan-main{
+  background:rgba(30,30,35,.4);
+}
+
+.scan-options{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-bottom:14px;
+  opacity:0;
+  transform:translateY(20px);
+  pointer-events:none;
+  transition:.3s ease;
+}
+
+.scan-options.show{
+  opacity:1;
+  transform:translateY(0);
+  pointer-events:auto;
+}
+
+.scan-options button{
+  padding:14px;
+  border-radius:20px;
+  border:none;
+  font-weight:600;
+  font-size:14px;
+  cursor:pointer;
+  background:rgba(255,255,255,.3);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  box-shadow:0 15px 35px rgba(0,0,0,.25);
+  transition:.2s;
+}
+
+.scan-options button:active{
+  transform:scale(.95);
+}
+
+body.dark .scan-options button{
+  background:rgba(255,255,255,.08);
+}
+
 </style>
 </head>
 
@@ -643,6 +719,22 @@ body.dark #actionsModal button{
 </div>
 
 </div> <!-- CIERRE DE TABBAR -->
+
+<!-- ========================= -->
+<!-- BOTÓN SCAN GLASS FLOAT -->
+<!-- ========================= -->
+
+<div class="scan-fab" id="scanFab">
+  <div class="scan-main" onclick="toggleScanMenu()">
+    <span>📡</span>
+  </div>
+
+  <div class="scan-options" id="scanOptions">
+    <button onclick="generarQR()">Generar Código</button>
+    <button onclick="abrirScanner()">Escanear Código</button>
+  </div>
+</div>
+
 
 <div id="cardModal" class="modal">
   <div class="modal-content">
@@ -729,6 +821,21 @@ body.dark #actionsModal button{
   </div>
 </div>
 
+<div class="modal" id="qrModal">
+  <div class="modal-content">
+    <button class="close-modal" onclick="closeQR()">✕</button>
+    <h2>Código QR</h2>
+    <div id="qrcode" style="margin:auto;"></div>
+  </div>
+</div>
+
+<div class="modal" id="scannerModal">
+  <div class="modal-content">
+    <button class="close-modal" onclick="closeScanner()">✕</button>
+    <h2>Escanear QR</h2>
+    <div id="reader" style="width:100%;"></div>
+  </div>
+</div>
 
 
 <script>
@@ -1015,6 +1122,36 @@ if ("serviceWorker" in navigator) {
       .catch(err => console.log("Error SW:", err));
   });
 }
+
+
+/* ========================= */
+/* GENERAR QR */
+/* ========================= */
+
+function generarQR(){
+
+  if(selectedCardIndex === null){
+    alert("Selecciona una tarjeta primero");
+    return;
+  }
+
+  const tarjeta = tarjetas[selectedCardIndex];
+
+  document.getElementById("qrModal").classList.add("show");
+
+  document.getElementById("qrcode").innerHTML = "";
+
+  new QRCode(document.getElementById("qrcode"), {
+    text: JSON.stringify(tarjeta),
+    width:200,
+    height:200
+  });
+}
+
+function closeQR(){
+  document.getElementById("qrModal").classList.remove("show");
+}
+
 /* ========================= */
 /* EFECTO WALLET DINÁMICO 3D */
 /* ========================= */
@@ -1113,7 +1250,56 @@ document.getElementById("languageBtn").addEventListener("click", function(){
   box.style.display = box.style.display === "flex" ? "none" : "flex";
 });
 
+function toggleScanMenu(){
+  document.getElementById("scanOptions").classList.toggle("show");
+}
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+/* ========================= */
+/* SCANNER QR */
+/* ========================= */
+
+let html5QrCode;
+
+function abrirScanner(){
+
+  document.getElementById("scannerModal").classList.add("show");
+
+  html5QrCode = new Html5Qrcode("reader");
+
+  html5QrCode.start(
+    { facingMode: "environment" },
+    { fps:10, qrbox:250 },
+    qrCodeMessage => {
+
+      html5QrCode.stop();
+      closeScanner();
+
+      try{
+        const nuevaTarjeta = JSON.parse(qrCodeMessage);
+
+        if(confirm("¿Agregar tarjeta escaneada?")){
+          tarjetas.push(nuevaTarjeta);
+          localStorage.setItem("tarjetas", JSON.stringify(tarjetas));
+          renderCards();
+        }
+
+      }catch(e){
+        alert("QR inválido");
+      }
+
+    }
+  );
+}
+
+function closeScanner(){
+  document.getElementById("scannerModal").classList.remove("show");
+  if(html5QrCode){
+    html5QrCode.stop().catch(()=>{});
+  }
+}
 
 
 </script>
