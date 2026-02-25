@@ -305,14 +305,12 @@ body.dark .modal-actions button:first-child{
 .top-buttons{
   position:fixed;
   top:20px;
-  left:20px;
   right:20px;
 
   display:flex;
-  justify-content:space-between; /* separa extremos */
-  align-items:center;
+  gap:12px;
 
-  z-index:900;
+  z-index:1000;
 }
 
 .qr-btn,
@@ -344,17 +342,23 @@ body.dark .theme-btn{
   border:1px solid rgba(255,255,255,0.08);
 }
 
-/* Imagen QR fija */
+/* QR SIEMPRE visible */
 .qr-btn{
-  background-image:url("qr.PNG");
+  background-image:url("qr.PNG") !important;
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:80%;
 }
 
-/* Por defecto modo claro = moon */
+/* Moon modo claro */
 .theme-btn{
   background-image:url("moon.PNG");
+  background-repeat:no-repeat;
+  background-position:center;
+  background-size:80%;
 }
 
-/* Cuando el body tiene dark = sun */
+/* Sun modo oscuro */
 body.dark .theme-btn{
   background-image:url("sun.PNG");
 }
@@ -891,7 +895,6 @@ function runUSSD(code){
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  syncThemeIcon();
   renderCards();
 
   const cardNumber = document.getElementById("cardNumber");
