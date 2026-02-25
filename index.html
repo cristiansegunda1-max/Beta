@@ -309,8 +309,8 @@ body.dark .modal-actions button:first-child{
   right:20px;
 
   display:flex;
+  justify-content:space-between; /* separa extremos */
   align-items:center;
-  justify-content:space-between;
 
   z-index:900;
 }
@@ -331,7 +331,7 @@ body.dark .modal-actions button:first-child{
     0 20px 40px rgba(0,0,0,0.25),
     inset 0 1px 0 rgba(255,255,255,0.4);
 
-  background-size:20px;
+  background-size:80%;
   background-repeat:no-repeat;
   background-position:center;
 
@@ -342,6 +342,21 @@ body.dark .qr-btn,
 body.dark .theme-btn{
   background:rgba(20,20,25,0.45);
   border:1px solid rgba(255,255,255,0.08);
+}
+
+/* Imagen QR fija */
+.qr-btn{
+  background-image:url("qr.PNG");
+}
+
+/* Por defecto modo claro = moon */
+.theme-btn{
+  background-image:url("moon.PNG");
+}
+
+/* Cuando el body tiene dark = sun */
+body.dark .theme-btn{
+  background-image:url("sun.PNG");
 }
 
 /* ========================= */
@@ -824,21 +839,12 @@ let selectedCardIndex = null;
 
 function toggleTheme(){
   document.body.classList.toggle("dark");
-  syncThemeIcon();
+
+  localStorage.setItem(
+    "theme",
+    document.body.classList.contains("dark") ? "dark" : "light"
+  );
 }
-
-function syncThemeIcon(){
-  const btn = document.querySelector(".theme-btn");
-  if(!btn) return;
-
-  btn.style.backgroundImage =
-    document.body.classList.contains("dark")
-      ? "url('sun.PNG')"
-      : "url('moon.PNG')";
-}
-
-// Esto hace que al cargar la página se sincronice solo
-document.addEventListener("DOMContentLoaded", syncThemeIcon);
 
 /* ========================= */
 /* MODAL */
