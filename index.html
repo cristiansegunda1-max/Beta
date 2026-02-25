@@ -110,6 +110,11 @@ body{
   display:flex;
 }
 
+body.modal-open .tabbar,
+body.modal-open .top-buttons{
+  display:none;
+  }
+
 .modal-content{
   width:92%;
   max-width:380px;
@@ -292,10 +297,7 @@ body.dark .modal-actions button:first-child{
     0 25px 60px rgba(91,91,247,0.55),
     0 0 40px rgba(91,91,247,0.35);
 
-  bottom:7px;
-}
-  
-
+  bottom:14px;
   transition:.3s ease;
 }
 
@@ -310,7 +312,7 @@ body.dark .modal-actions button:first-child{
   align-items:center;
   justify-content:space-between;
 
-  z-index:9999;
+  z-index:900;
 }
 
 .qr-btn,
