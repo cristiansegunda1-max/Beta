@@ -324,11 +324,6 @@ body.dark .tabbar::before{
   background: rgba(255,255,255,0.35);
 }
 
-/* 🌙 DARK */
-body.dark .tab-icon-btn{
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-}
 
 .tab-icon-btn:active{
   transform:scale(0.88);
@@ -342,41 +337,6 @@ body.dark .tab-icon-btn{
   /* MAGIA: Esto quita el fondo negro y deja solo las líneas blancas */
   mix-blend-mode: screen; 
   filter: brightness(1.5); /* Hace que las líneas brillen más */
-}
-
-.tab-icon-btn{
-  position:relative;
-  z-index:2;
-}
-
-.tab-icon-btn.active{
-  transform: scale(1.1);
-}
-
-.tab-icon-btn.active img{
-  filter: brightness(2);
-}
-
-.tab-indicator{
-  position:absolute;
-  width:60px;
-  height:60px;
-  border-radius:20px;
-
-  background: linear-gradient(135deg,#5b5bf7,#7a6df9);
-
-  top:50%;
-  transform: translateY(-50%);
-
-  left: 20px;
-
-  transition: all .45s cubic-bezier(.2,1,.3,1);
-
-  box-shadow:
-    0 10px 25px rgba(91,91,247,0.45),
-    inset 0 1px 1px rgba(255,255,255,0.4);
-
-  z-index:0;
 }
 
 body.dark .tab-indicator{
@@ -799,7 +759,6 @@ body.dark #actionsModal button{
 </div>
 
 <div class="tabbar">
-  <div class="tab-indicator"></div>
   <div class="tab-icon-btn" onclick="openModal()">
     <img src="agregar.png">
   </div>
@@ -1352,27 +1311,6 @@ window.addEventListener("scroll", ()=>{
   tabbar.style.backdropFilter = `blur(${blur}px) saturate(180%)`;
 });
 
-function setActiveTab(index){
-
-  const buttons = document.querySelectorAll(".tab-icon-btn");
-  const indicator = document.querySelector(".tab-indicator");
-
-  buttons.forEach(btn => btn.classList.remove("active"));
-
-  const activeBtn = buttons[index];
-  activeBtn.classList.add("active");
-
-  const rect = activeBtn.getBoundingClientRect();
-  const parentRect = activeBtn.parentElement.getBoundingClientRect();
-
-  const offset = rect.left - parentRect.left;
-
-  indicator.style.left = offset + "px";
-}
-
-window.addEventListener("load", ()=>{
-  setActiveTab(0);
-});
 
 document.querySelectorAll(".tab-icon-btn").forEach((btn, i)=>{
   btn.addEventListener("click", ()=>{
