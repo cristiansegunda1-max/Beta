@@ -294,8 +294,7 @@ body.dark .tabbar{
   box-shadow:
     0 15px 40px rgba(91,91,247,0.5);
 
-  position:relative;
-  top:8px; /* 👈 lo baja un poquito */
+  transform:translateY(10px);
 }
 
 /* BOTÓN MODO */
@@ -325,6 +324,41 @@ body.dark .tabbar{
 .theme-btn:active{
   transform:scale(.92);
 }
+
+.top-buttons{
+  position:absolute;
+  top:28px;
+  right:20px;
+  display:flex;
+  gap:12px;
+}
+
+.qr-btn{
+  width:64px;
+  height:64px;
+  border-radius:22px;
+
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(26px);
+  -webkit-backdrop-filter:blur(26px);
+
+  box-shadow:
+    0 14px 34px rgba(0,0,0,.18),
+    inset 0 1px 1px rgba(255,255,255,.45);
+
+  cursor:pointer;
+  transition:transform .25s ease;
+
+  background-image:url('qr.PNG');
+  background-size:28px;
+  background-repeat:no-repeat;
+  background-position:center;
+}
+
+.qr-btn:active{
+  transform:scale(.92);
+}
+
 /* ========================= */
 /* VENTANA PLACEHOLDER iOS GLASS */
 /* ========================= */
@@ -658,7 +692,10 @@ body.dark #actionsModal button{
   <p>Gestiona tus tarjetas desde la comodidad de CM Card</p>
 </div>
 
-<div class="theme-btn" onclick="toggleTheme()"></div>
+<div class="top-buttons">
+  <div class="qr-btn" onclick="generarQR()"></div>
+  <div class="theme-btn" onclick="toggleTheme()"></div>
+</div>
 
 <div class="main">
   <div class="wallet-blur-bg" id="walletBlur"></div>
@@ -789,6 +826,7 @@ body.dark #actionsModal button{
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <script>
 let tarjetas = JSON.parse(localStorage.getItem("tarjetas")) || [];
@@ -1167,13 +1205,18 @@ document.addEventListener("DOMContentLoaded", function(){
 
 window.addEventListener("load", function(){
   const savedTheme = localStorage.getItem("theme");
+  const darkToggle = document.getElementById("darkToggle");
+
   if(savedTheme === "dark"){
     document.body.classList.add("dark");
-    darkToggle.checked = true;
+    if(darkToggle) darkToggle.checked = true;
   }
+
   const savedLang = localStorage.getItem("language") || "es";
-setLanguage(savedLang);
+  setLanguage(savedLang);
 });
+
+
 
 const translations = {
   es: {
@@ -1211,7 +1254,7 @@ function toggleScanMenu(){
 }
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 
 
 </script>
