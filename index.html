@@ -352,8 +352,8 @@ body.dark .tab-icon-btn::after{
 }
 
 .tab-icon-btn img{
-  width:32px;
-  height:32px;
+  width:48px;
+  height:48px;
   object-fit:contain;
 
   filter: brightness(0); /* negro por defecto */
@@ -812,6 +812,26 @@ body.dark #actionsModal button{
   </div>
 </div>
 
+<div id="actionsScreen" style="display:none; padding:20px;">
+
+  <div style="margin-bottom:20px;">
+    <button onclick="volverHome()" style="font-size:18px;">← Volver</button>
+  </div>
+
+  <div id="cardPreviewContainer"></div>
+
+  <div style="margin-top:30px; display:flex; flex-direction:column; gap:14px;">
+
+    <button onclick="runUSSD('*444*40*03#')">Autenticarse</button>
+    <button onclick="runUSSD('*444*46#')">Consultar Saldo</button>
+    <button onclick="runUSSD('*444*58#')">Consultar todas las cuentas</button>
+    <button onclick="runUSSD('*444*45#')">Enviar Transferencia</button>
+    <button onclick="runUSSD('*444*54#')">Recarga Movil</button>
+
+  </div>
+
+</div>
+
 <div class="tabbar">
   <div class="tab-icon-btn" onclick="openModal()">
     <img src="agregar.PNG">
@@ -894,24 +914,7 @@ body.dark #actionsModal button{
 <!-- MODAL ACCIONES -->
 <!-- ========================= -->
 
-<div class="modal" id="actionsModal">
-  <div class="modal-content settings-box">
-    
-    <button class="close-modal" onclick="closeActions()">✕</button>
-    <h2>Acciones</h2>
 
-    <div style="display:flex; flex-direction:column; gap:12px;">
-
-      <button onclick="runUSSD('*444*40*03#')">Autenticarse</button>
-      <button onclick="runUSSD('*444*46#')">Consultar Saldo</button>
-      <button onclick="runUSSD('*444*58#')">Consultar todas las cuentas</button>
-      <button onclick="runUSSD('*444*45#')">Enviar Transferencia</button>
-      <button onclick="runUSSD('*444*54#')">Recarga Movil</button>
-
-    </div>
-
-  </div>
-</div>
 
 <div class="modal" id="qrModal">
   <div class="modal-content">
@@ -970,19 +973,36 @@ function closeSettings(){
 }
 
 function openActions(){
+
   if(selectedCardIndex === null){
     alert("Selecciona una tarjeta primero");
     return;
   }
-  document.getElementById("actionsModal").classList.add("show");
+
+  // Esconder home
+  document.querySelector(".header").style.display = "none";
+  document.querySelector(".main").style.display = "none";
+  document.querySelector(".tabbar").style.display = "none";
+
+  // Mostrar pantalla acciones
+  document.getElementById("actionsScreen").style.display = "block";
+
+  // Copiar tarjeta seleccionada
+  const tarjetaSeleccionada =
+    document.querySelectorAll(".card")[selectedCardIndex];
+
+  document.getElementById("cardPreviewContainer").innerHTML =
+    tarjetaSeleccionada.outerHTML;
 }
 
-function closeActions(){
-  document.getElementById("actionsModal").classList.remove("show");
-}
+function volverHome(){
 
-function runUSSD(code){
-  closeActions();
+  document.querySelector(".header").style.display = "block";
+  document.querySelector(".main").style.display = "flex";
+  document.querySelector(".tabbar").style.display = "flex";
+
+  document.getElementById("actionsScreen").style.display = "none";
+}
 
   // Abre marcador con código USSD
   window.location.href = "tel:" + encodeURIComponent(code);
@@ -1329,7 +1349,6 @@ function setLanguage(lang){
     el.textContent = translations[lang][key];
   });
   
-  syncThemeIcon();
 
   document.getElementById("languageOptions").style.display="none";
   document.getElementById("languageBtn").textContent =
