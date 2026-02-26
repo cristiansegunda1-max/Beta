@@ -301,45 +301,67 @@ body.dark .tabbar::before{
 /* BOTONES TAB */
 
 .tab-icon-btn{
-  width:54px;
-  height:54px;
+  width:60px;
+  height:60px;
   border-radius:18px;
 
   display:flex;
   align-items:center;
   justify-content:center;
 
-  background: rgba(255,255,255,0.12);
-  backdrop-filter: blur(25px) saturate(180%);
-  -webkit-backdrop-filter: blur(25px) saturate(180%);
-
-  /* ❌ quitamos borde blanco */
+  background: transparent; /* 🔥 clave */
   border: none;
+  box-shadow: none;
 
-  /* ✅ borde real tipo gel */
-  box-shadow:
-    inset 0 1px 1px rgba(255,255,255,0.25),
-    inset 0 -6px 12px rgba(0,0,0,0.15),
-    0 8px 20px rgba(0,0,0,0.25);
+  position: relative;
+  overflow: hidden;
+
+  transition: transform .2s ease;
+}
+
+.tab-icon-btn::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:18px;
+
+  background: rgba(255,255,255,0.25);
+  opacity:0;
+  transform: scale(0.6);
 
   transition: all .25s cubic-bezier(.2,.8,.2,1);
 }
 
+body.dark .tab-icon-btn::after{
+  background: rgba(255,255,255,0.12);
+}
+
+.tab-icon-btn:active::after{
+  opacity:1;
+  transform: scale(1);
+}
+
+
+
 /* 🔥 EFECTO PRESIÓN iOS */
 .tab-icon-btn:active{
-  transform: scale(0.82);
+  transform: scale(0.9);
   background: rgba(255,255,255,0.25);
   box-shadow:
     inset 0 2px 6px rgba(0,0,0,0.15);
 }
 
-.tab-icon-btn img {
-  width: 55%;
-  height: 55%;
-  object-fit: contain;
+.tab-icon-btn img{
+  width:24px;
+  height:24px;
+  object-fit:contain;
 
-  filter: brightness(0) invert(1);
-  opacity: 0.9;
+  filter: brightness(0); /* negro por defecto */
+  opacity:0.9;
+}
+
+body.dark .tab-icon-btn img{
+  filter: brightness(0) invert(1); /* blanco */
 }
 
 body.dark .tab-indicator{
@@ -374,26 +396,22 @@ body.dark .tab-icon-btn{
   height:48px;
   border-radius:18px;
 
-  background:rgba(255,255,255,0.08);
-  backdrop-filter:blur(40px) saturate(180%);
-  -webkit-backdrop-filter:blur(40px) saturate(180%);
+  background-color:rgba(255,255,255,0.15);
+  backdrop-filter:blur(30px);
+  -webkit-backdrop-filter:blur(30px);
 
-  border:1px solid rgba(255,255,255,0.18);
+  border:1px solid rgba(255,255,255,0.2);
 
-  box-shadow:
-    0 20px 40px rgba(0,0,0,0.25),
-    inset 0 1px 0 rgba(255,255,255,0.4);
-
-  background-size:80%;
   background-repeat:no-repeat;
   background-position:center;
+  background-size:22px;
 
   transition:.25s ease;
 }
 
 body.dark .qr-btn,
 body.dark .theme-btn{
-  background:rgba(20,20,25,0.45);
+  background-color:rgba(255,255,255,0.06);
   border:1px solid rgba(255,255,255,0.08);
 }
 
