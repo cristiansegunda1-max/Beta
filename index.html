@@ -1004,7 +1004,7 @@ function volverHome(){
   document.getElementById("actionsScreen").style.display = "none";
 }
 
-  // Abre marcador con código USSD
+function runUSSD(code){
   window.location.href = "tel:" + encodeURIComponent(code);
 }
 
