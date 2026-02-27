@@ -783,6 +783,46 @@ body.dark #actionsModal button{
   border:1px solid rgba(255,255,255,.1);
 }
 
+.quick-btn{
+  flex:1;
+  padding:14px 0;
+  border-radius:18px;
+  border:none;
+  background:#1c1c1e;
+  color:white;
+  font-size:14px;
+  font-weight:500;
+}
+
+.quick-btn:active{
+  opacity:0.7;
+}
+
+.ios-list{
+  background:#1c1c1e;
+  border-radius:22px;
+  overflow:hidden;
+}
+
+.ios-item{
+  padding:18px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  font-size:16px;
+}
+
+.ios-item:last-child{
+  border-bottom:none;
+}
+
+.ios-item:active{
+  background:rgba(255,255,255,0.08);
+}
+
+#actionsScreen{
+  background:black;
+  min-height:100vh;
+}
+
 </style>
 </head>
 
@@ -814,19 +854,68 @@ body.dark #actionsModal button{
 
 <div id="actionsScreen" style="display:none; padding:20px;">
 
-  <div style="margin-bottom:20px;">
-    <button onclick="volverHome()" style="font-size:18px;">← Volver</button>
+  <!-- Header -->
+  <div style="display:flex; align-items:center; margin-bottom:20px;">
+    <button onclick="volverHome()" 
+      style="background:none; border:none; font-size:22px; color:white;">
+      ←
+    </button>
+
+    <h2 style="flex:1; text-align:center; margin:0;">
+      Acciones
+    </h2>
   </div>
 
-  <div id="cardPreviewContainer"></div>
+  <!-- Tarjeta -->
+  <div id="cardPreviewContainer" style="margin-bottom:25px;"></div>
 
-  <div style="margin-top:30px; display:flex; flex-direction:column; gap:14px;">
+  <!-- Botones rápidos -->
+  <div style="
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:30px;
+  ">
 
-    <button onclick="runUSSD('*444*40*03#')">Autenticarse</button>
-    <button onclick="runUSSD('*444*46#')">Consultar Saldo</button>
-    <button onclick="runUSSD('*444*58#')">Consultar todas las cuentas</button>
-    <button onclick="runUSSD('*444*45#')">Enviar Transferencia</button>
-    <button onclick="runUSSD('*444*54#')">Recarga Movil</button>
+    <button class="quick-btn" onclick="runUSSD('*444*40*03#')">
+      Autenticar
+    </button>
+
+    <button class="quick-btn" onclick="runUSSD('*444*46#')">
+      Consultar
+    </button>
+
+    <button class="quick-btn" onclick="runUSSD('*444*45#')">
+      Transferir
+    </button>
+
+    <button class="quick-btn" onclick="runUSSD('*444*54#')">
+      Recargar
+    </button>
+
+  </div>
+
+  <!-- Título -->
+  <h3 style="margin-bottom:15px;">Consultas</h3>
+
+  <!-- Lista -->
+  <div class="ios-list">
+
+    <div class="ios-item" onclick="runUSSD('*444*46#')">
+      Consultar Saldo
+    </div>
+
+    <div class="ios-item" onclick="runUSSD('*444*58#')">
+      Consulta Todas las Cuentas
+    </div>
+
+    <div class="ios-item">
+      Tipo de Cambio
+    </div>
+
+    <div class="ios-item">
+      Información Tarjeta Red
+    </div>
 
   </div>
 
@@ -993,6 +1082,8 @@ function openActions(){
 
   document.getElementById("cardPreviewContainer").innerHTML =
     tarjetaSeleccionada.outerHTML;
+    document.querySelector("#cardPreviewContainer .card").style.transform = "scale(1.05)";
+document.querySelector("#cardPreviewContainer .card").style.margin = "0 auto";
 }
 
 function volverHome(){
