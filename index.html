@@ -252,6 +252,33 @@ body.dark .modal-actions button:first-child{
   overflow: hidden;
 }
 
+.tab-indicator{
+  position:absolute;
+  height:60px;
+  width:70px;
+  border-radius:30px;
+
+  background:rgba(255,255,255,0.35);
+  backdrop-filter:blur(30px);
+  -webkit-backdrop-filter:blur(30px);
+
+  box-shadow:
+    0 15px 40px rgba(0,0,0,0.2),
+    inset 0 1px 2px rgba(255,255,255,0.7);
+
+  transition:
+    left 0.35s cubic-bezier(.4,1.4,.6,1),
+    width 0.25s ease,
+    transform 0.25s ease;
+
+  z-index:1;
+}
+
+.tab-icon-btn{
+  position:relative;
+  z-index:2;
+}
+
 .tabbar::before{
   content:"";
   position:absolute;
@@ -297,6 +324,7 @@ body.dark .tabbar::before{
     transparent
   );
 }
+
 
 /* BOTONES TAB */
 
@@ -922,6 +950,9 @@ body.dark #actionsModal button{
 </div>
 
 <div class="tabbar">
+  
+  <div class="tab-indicator"></div>
+  
   <div class="tab-icon-btn" onclick="openModal()">
     <img src="agregar.PNG">
   </div>
@@ -1068,10 +1099,23 @@ function openActions(){
     return;
   }
 
+  moveIndicator(document.querySelectorAll(".tab-icon-btn")[1]);
+
+  document.querySelector(".header").style.display = "none";
+  document.querySelector(".main").style.display = "none";
+
+  document.getElementById("actionsScreen").style.display = "block";
+
+  const tarjetaSeleccionada =
+    document.querySelectorAll(".card")[selectedCardIndex];
+
+  document.getElementById("cardPreviewContainer").innerHTML =
+    tarjetaSeleccionada.outerHTML;
+}
+
   // Esconder home
   document.querySelector(".header").style.display = "none";
   document.querySelector(".main").style.display = "none";
-  document.querySelector(".tabbar").style.display = "none";
 
   // Mostrar pantalla acciones
   document.getElementById("actionsScreen").style.display = "block";
@@ -1090,9 +1134,10 @@ function volverHome(){
 
   document.querySelector(".header").style.display = "block";
   document.querySelector(".main").style.display = "flex";
-  document.querySelector(".tabbar").style.display = "flex";
 
   document.getElementById("actionsScreen").style.display = "none";
+
+  moveIndicator(document.querySelectorAll(".tab-icon-btn")[0]);
 }
 
 function runUSSD(code){
@@ -1456,15 +1501,6 @@ function toggleScanMenu(){
   document.getElementById("scanOptions").classList.toggle("show");
 }
 
-document.querySelectorAll(".tab-icon-btn").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    btn.style.transform = "scale(0.8)";
-    
-    setTimeout(()=>{
-      btn.style.transform = "scale(1)";
-    },150);
-  });
-});
 
 window.addEventListener("scroll", ()=>{
   const tabbar = document.querySelector(".tabbar");
@@ -1475,23 +1511,42 @@ window.addEventListener("scroll", ()=>{
   tabbar.style.backdropFilter = `blur(${blur}px) saturate(180%)`;
 });
 
+const tabButtonsNew = document.querySelectorAll(".tab-icon-btn");
+const indicator = document.querySelector(".tab-indicator");
 
-document.querySelectorAll(".tab-icon-btn").forEach((btn, i)=>{
-  btn.addEventListener("click", ()=>{
+function moveIndicator(element){
 
-    btn.style.transform = "scale(0.85)";
+  const rect = element.getBoundingClientRect();
+  const parentRect = element.parentElement.getBoundingClientRect();
+
+  const left = rect.left - parentRect.left;
+
+  indicator.style.width = rect.width * 0.9 + "px";
+  indicator.style.left = left + (rect.width * 0.05) + "px";
+
+  tabButtonsNew.forEach(btn=> btn.classList.remove("active"));
+  element.classList.add("active");
+}
+
+tabButtonsNew.forEach(btn=>{
+  btn.addEventListener("click", function(){
+
+    indicator.style.transform = "scaleX(1.3)";
+    moveIndicator(this);
 
     setTimeout(()=>{
-      if(btn.classList.contains("active")){
-        btn.style.transform = "scale(1.1)";
-      }else{
-        btn.style.transform = "scale(1)";
-      }
+      indicator.style.transform = "scaleX(1)";
     },150);
 
   });
 });
 
+window.addEventListener("load", ()=>{
+  const activeBtn = document.querySelector(".tab-icon-btn.active");
+  if(activeBtn){
+    moveIndicator(activeBtn);
+  }
+});
 
 
 </script>
