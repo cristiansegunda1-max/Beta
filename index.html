@@ -811,21 +811,34 @@ body.dark #actionsModal button{
   border:1px solid rgba(255,255,255,.1);
 }
 
+.quick-actions{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:35px;
+}
+
 .quick-btn{
-  min-width:120px;
-  padding:16px 20px;
-  border-radius:28px;
-
-  background: rgba(255,255,255,0.25);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-
-  border:1px solid rgba(255,255,255,0.4);
-
+  flex:1;                     /* Todos mismo tamaño */
+  padding:18px 0;
+  border-radius:999px;        /* Forma completamente ovalada */
+  text-align:center;
   font-size:14px;
   font-weight:600;
-
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border:1px solid rgba(255,255,255,0.4);
   transition: all .25s ease;
+}
+
+body.dark .quick-btn{
+  background: rgba(40,40,45,0.7);
+  border:1px solid rgba(255,255,255,0.08);
+}
+
+.quick-btn:active{
+  transform: scale(.95);
 }
 
 .quick-btn:active{
@@ -993,14 +1006,7 @@ body.dark .ios-list{
   <div id="cardPreviewContainer" style="margin-bottom:25px;"></div>
 
   <!-- Botones rápidos -->
- <div style="
-    display:flex;
-    justify-content:center;
-    gap:14px;
-    margin-bottom:35px;
-    flex-wrap:wrap;
-">
-
+<div class="quick-actions">
     <button class="quick-btn" onclick="runUSSD('*444*40*03#')">
       Autenticar
     </button>
