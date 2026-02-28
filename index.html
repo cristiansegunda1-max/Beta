@@ -953,7 +953,7 @@ body.dark #actionsModal button{
   
   <div class="tab-indicator"></div>
   
-  <div class="tab-icon-btn" onclick="openModal()">
+<div class="tab-icon-btn active" onclick="openModal()">
     <img src="agregar.PNG">
   </div>
 
@@ -1101,19 +1101,7 @@ function openActions(){
 
   moveIndicator(document.querySelectorAll(".tab-icon-btn")[1]);
 
-  document.querySelector(".header").style.display = "none";
-  document.querySelector(".main").style.display = "none";
-
-  document.getElementById("actionsScreen").style.display = "block";
-
-  const tarjetaSeleccionada =
-    document.querySelectorAll(".card")[selectedCardIndex];
-
-  document.getElementById("cardPreviewContainer").innerHTML =
-    tarjetaSeleccionada.outerHTML;
-}
-
-  // Esconder home
+  // Ocultar Home
   document.querySelector(".header").style.display = "none";
   document.querySelector(".main").style.display = "none";
 
@@ -1126,8 +1114,13 @@ function openActions(){
 
   document.getElementById("cardPreviewContainer").innerHTML =
     tarjetaSeleccionada.outerHTML;
-    document.querySelector("#cardPreviewContainer .card").style.transform = "scale(1.05)";
-document.querySelector("#cardPreviewContainer .card").style.margin = "0 auto";
+
+  // Ajuste visual
+  const previewCard =
+    document.querySelector("#cardPreviewContainer .card");
+
+  previewCard.style.transform = "scale(1.05)";
+  previewCard.style.margin = "0 auto";
 }
 
 function volverHome(){
