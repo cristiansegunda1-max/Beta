@@ -1179,23 +1179,22 @@ function openActions(){
 
   moveIndicator(document.querySelectorAll(".tab-icon-btn")[1]);
 
-  // Ocultar Home
   document.querySelector(".header").style.display = "none";
   document.querySelector(".main").style.display = "none";
 
-  // Mostrar pantalla acciones
   const screen = document.getElementById("actionsScreen");
-screen.classList.add("active");
+
+  screen.style.display = "block";   // 🔥 ESTA LÍNEA FALTABA
+  screen.classList.add("active");
+
   document.querySelector(".top-buttons").style.display = "none";
 
-  // Copiar tarjeta seleccionada
   const tarjetaSeleccionada =
     document.querySelectorAll(".card")[selectedCardIndex];
 
   document.getElementById("cardPreviewContainer").innerHTML =
     tarjetaSeleccionada.outerHTML;
 
-  // Ajuste visual
   const previewCard =
     document.querySelector("#cardPreviewContainer .card");
 
@@ -1205,11 +1204,16 @@ screen.classList.add("active");
 
 function volverHome(){
 
+  const screen = document.getElementById("actionsScreen");
+
+  screen.classList.remove("active");
+
+  setTimeout(()=>{
+    screen.style.display = "none"; // 🔥 ocultar después del slide
+  }, 400);
+
   document.querySelector(".header").style.display = "block";
   document.querySelector(".main").style.display = "flex";
-
-  const screen = document.getElementById("actionsScreen");
-screen.classList.remove("active");
   document.querySelector(".top-buttons").style.display = "flex";
 
   moveIndicator(document.querySelectorAll(".tab-icon-btn")[0]);
