@@ -1676,22 +1676,23 @@ const translations = {
   }
 };
 function setLanguage(lang){
+
   document.querySelectorAll("[data-i18n]").forEach(el=>{
     const key = el.getAttribute("data-i18n");
     el.textContent = translations[lang][key];
   });
-  
 
-  document.getElementById("languageOptions").style.display="none";
-  document.getElementById("languageBtn").textContent =
-    lang === "es" ? "Español" : "English";
+  const options = document.getElementById("languageOptionsScreen");
+  const btn = document.getElementById("languageBtnScreen");
+
+  if(options) options.style.display="none";
+
+  if(btn){
+    btn.textContent = lang === "es" ? "Español" : "English";
+  }
 
   localStorage.setItem("language", lang);
 }
-document.getElementById("languageBtn").addEventListener("click", function(){
-  const box = document.getElementById("languageOptions");
-  box.style.display = box.style.display === "flex" ? "none" : "flex";
-});
 
 function toggleScanMenu(){
   document.getElementById("scanOptions").classList.toggle("show");
