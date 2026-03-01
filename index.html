@@ -813,26 +813,34 @@ body.dark #actionsModal button{
 
 .quick-actions{
   display:grid;
-  grid-template-columns: 1fr 1fr;  /* 2 columnas iguales */
-  gap:18px;
+  grid-template-columns: repeat(4, 1fr);
+  gap:16px;
   margin-bottom:40px;
 }
 
 .quick-btn{
-  height:65px;                  /* MISMA ALTURA EXACTA */
-  border-radius:40px;           /* Forma oval perfecta */
+  height:95px;
+  border-radius:22px;
+
   display:flex;
+  flex-direction:column;
   align-items:center;
   justify-content:center;
-  font-size:15px;
-  font-weight:600;
+  gap:8px;
 
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
+  font-size:14px;
+  font-weight:500;
 
-  border:1px solid rgba(255,255,255,0.08);
+  background: rgba(40,40,45,0.85);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+  border:1px solid rgba(255,255,255,0.06);
+
   transition: all .25s ease;
+}
+
+.quick-btn:active{
+  transform: scale(.94);
 }
 
 body.dark .quick-btn{
@@ -1006,23 +1014,28 @@ body.dark .ios-list{
 
   <!-- Botones rápidos -->
 <div class="quick-actions">
-    <button class="quick-btn" onclick="runUSSD('*444*40*03#')">
-      Autenticar
-    </button>
 
-    <button class="quick-btn" onclick="runUSSD('*444*46#')">
-      Consultar
-    </button>
+  <button class="quick-btn" onclick="runUSSD('*444*40*03#')">
+    <span style="font-size:22px;">🔐</span>
+    <span>Autenticar</span>
+  </button>
 
-    <button class="quick-btn" onclick="runUSSD('*444*45#')">
-      Transferir
-    </button>
+  <button class="quick-btn" onclick="runUSSD('*444*46#')">
+    <span style="font-size:22px;">💰</span>
+    <span>Consultar</span>
+  </button>
 
-    <button class="quick-btn" onclick="runUSSD('*444*54#')">
-      Recargar
-    </button>
+  <button class="quick-btn" onclick="runUSSD('*444*45#')">
+    <span style="font-size:22px;">✈️</span>
+    <span>Transferir</span>
+  </button>
 
-  </div>
+  <button class="quick-btn" onclick="runUSSD('*444*54#')">
+    <span style="font-size:22px;">📲</span>
+    <span>Recargar</span>
+  </button>
+
+</div>
 
   <!-- Título -->
   <h3 style="margin-bottom:15px;">Consultas</h3>
