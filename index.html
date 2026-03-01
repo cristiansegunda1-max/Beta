@@ -732,11 +732,15 @@ input:checked + .slider:before{
 }
 
 .company-footer{
-  margin-top:25px;
+  position:absolute;
+  bottom:100px;
+  left:0;
+  right:0;
   text-align:center;
   font-size:12px;
   opacity:.6;
 }
+
 .close-modal {
   position: absolute;
   top: 12px;
@@ -831,12 +835,22 @@ body.dark #actionsModal button{
   font-size:14px;
   font-weight:500;
 
-  background: rgba(40,40,45,0.85);
-backdrop-filter: blur(20px);
--webkit-backdrop-filter: blur(20px);
-  border:1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+
+  border:1px solid rgba(255,255,255,0.5);
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.6);
 
   transition: all .25s ease;
+}
+
+body.dark .quick-btn{
+  background: rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.1);
 }
 
 .quick-btn:active{
@@ -926,14 +940,16 @@ body.dark .ios-list{
 }
 
 #settingsScreen{
-  min-height:100vh;
+  position:fixed;
+  inset:0;
   padding:25px 20px 120px 20px;
   background: var(--bg);
   color: var(--text);
-  transition: background .3s ease, color .3s ease;
   box-sizing:border-box;
 
   transform: translateX(100%);
+  transition: transform .4s cubic-bezier(.25,.8,.25,1);
+  z-index:90;
 }
 
 #settingsScreen.active{
@@ -1128,7 +1144,7 @@ body.dark .ios-list{
 <!-- MODAL AJUSTES -->
 <!-- ========================= -->
 
-<div id="settingsScreen" style="display:none;">
+<div id="settingsScreen">
 
   <div style="
     display:flex;
@@ -1172,9 +1188,11 @@ body.dark .ios-list{
       <button onclick="setLanguage('en')">English</button>
     </div>
 
-    <div class="company-footer">
-      CM "55384064" Company
-    </div>
+ </div> <!-- cierre ios-list -->
+
+<div class="company-footer">
+  CM "55384064" Company
+</div>
 
   </div>
 
@@ -1333,9 +1351,8 @@ function volverHome(){
   document.querySelector(".main").style.display = "flex";
   document.querySelector(".top-buttons").style.display = "flex";
 
-  moveIndicator(document.querySelectorAll(".tab-icon-btn")[0]);
-}
-
+  moveIndicator(document.querySelectorAll(".tab-icon-btn")[2]);
+  
 function runUSSD(code){
   window.location.href = "tel:" + encodeURIComponent(code);
 }
