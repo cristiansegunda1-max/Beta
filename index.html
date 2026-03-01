@@ -822,49 +822,37 @@ body.dark #actionsModal button{
   margin-bottom:40px;
 }
 
+/* VARIABLES BASE */
+:root{
+  --quick-bg-light: rgba(255,255,255,0.7);
+  --quick-border-light: rgba(0,0,0,0.06);
+
+  --quick-bg-dark: rgba(255,255,255,0.08);
+  --quick-border-dark: rgba(255,255,255,0.08);
+}
+
+/* ESTILO GENERAL */
 .quick-btn{
   height:95px;
   border-radius:22px;
-
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
   gap:8px;
-
   font-size:14px;
   font-weight:500;
-
-  background: rgba(255,255,255,0.6);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-
-  border:1px solid rgba(255,255,255,0.5);
-
-  box-shadow:
-    0 10px 30px rgba(0,0,0,0.08),
-    inset 0 1px 0 rgba(255,255,255,0.6);
-
   transition: all .25s ease;
 }
 
-body.dark .quick-btn{
-  background: rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,0.1);
+body:not(.dark) .quick-btn{
+  background: rgba(255,255,255,0.7);
+  border:1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  color:#000;
 }
-
-.quick-btn:active{
-  transform: scale(.94);
-}
-
-body.dark .quick-btn{
-  background: rgba(40,40,45,0.6);
-}
-
-.quick-btn:active{
-  transform: scale(.96);
-}
-
 
 body.dark .quick-btn{
   background: rgba(255,255,255,0.08);
@@ -873,7 +861,7 @@ body.dark .quick-btn{
 }
 
 .quick-btn:active{
-  opacity:0.7;
+  transform: scale(.95);
 }
 
 .ios-list{
@@ -905,56 +893,27 @@ body.dark .ios-list{
   background:rgba(255,255,255,0.08);
 }
 
-#actionsScreen{
-  min-height:100vh;
-  padding:20px;
-  background: var(--bg);
-  color: var(--text);
-  transition: background .3s ease, color .3s ease;
-}
+/* ========================= */
+/* SISTEMA DE PANTALLAS REAL */
+/* ========================= */
 
-/* Estado inicial escondido */
-#actionsScreen{
-  min-height:100vh;
-  padding:25px 20px 120px 20px; /* espacio inferior para tabbar */
-  background: var(--bg);
-  color: var(--text);
-  transition: background .3s ease, color .3s ease;
-  box-sizing:border-box;
-}
-
-/* Cuando está activo */
-#actionsScreen.active{
-  transform: translateX(0);
-}
-
-#actionsScreen .card{
-  transform: translateY(40px) scale(.95);
-  opacity:0;
-  transition: all .5s cubic-bezier(.25,.8,.25,1);
-}
-
-#actionsScreen.active .card{
-  transform: translateY(0) scale(1);
-  opacity:1;
-}
-
-#settingsScreen{
+.screen{
   position:fixed;
   inset:0;
   padding:25px 20px 120px 20px;
-  background: var(--bg);
-  color: var(--text);
+  background:var(--bg);
+  color:var(--text);
   box-sizing:border-box;
 
-  transform: translateX(100%);
-  transition: transform .4s cubic-bezier(.25,.8,.25,1);
-  z-index:90;
+  transform:translateX(100%);
+  transition:transform .4s cubic-bezier(.25,.8,.25,1);
+  overflow-y:auto;
+
+  z-index:200;
 }
 
-#settingsScreen.active{
-  transform: translateX(0);
-  transition: transform .4s cubic-bezier(.25,.8,.25,1);
+.screen.active{
+  transform:translateX(0);
 }
 
 @keyframes liquidDrop {
@@ -1014,7 +973,7 @@ body.dark .ios-list{
   </div>
 </div>
 
-<div id="actionsScreen" style="display:none;">
+<div id="actionsScreen" class="screen">
 
   <!-- Header -->
  <div style="
@@ -1144,7 +1103,7 @@ body.dark .ios-list{
 <!-- MODAL AJUSTES -->
 <!-- ========================= -->
 
-<div id="settingsScreen">
+<div id="settingsScreen" class="screen">
 
   <div style="
     display:flex;
@@ -1257,19 +1216,9 @@ function openSettings(){
 
   moveIndicator(document.querySelectorAll(".tab-icon-btn")[2]);
 
-  document.querySelector(".header").style.display = "none";
-  document.querySelector(".main").style.display = "none";
-  document.getElementById("actionsScreen").style.display = "none";
+  document.getElementById("settingsScreen").classList.add("active");
 
-  const screen = document.getElementById("settingsScreen");
-
-  screen.style.display = "block";
-
-  setTimeout(()=>{
-    screen.classList.add("active");
-  },10);
-
-  document.querySelector(".top-buttons").style.display = "none";
+  document.querySelector(".top-buttons").style.display="none";
 
   const darkToggle = document.getElementById("darkToggleScreen");
 
@@ -1279,13 +1228,6 @@ function openSettings(){
     document.body.classList.toggle("dark", this.checked);
     localStorage.setItem("theme", this.checked ? "dark" : "light");
   };
-
-  const btn = document.getElementById("languageBtnScreen");
-  const box = document.getElementById("languageOptionsScreen");
-
-  btn.onclick = function(){
-    box.style.display = box.style.display === "flex" ? "none" : "flex";
-  };
 }
 
 function volverDesdeSettings(){
@@ -1293,14 +1235,9 @@ function volverDesdeSettings(){
   const screen = document.getElementById("settingsScreen");
 
   screen.classList.remove("active");
+  screen.scrollTop = 0;
 
-  setTimeout(()=>{
-    screen.style.display = "none";
-  },400);
-
-  document.querySelector(".header").style.display = "block";
-  document.querySelector(".main").style.display = "flex";
-  document.querySelector(".top-buttons").style.display = "flex";
+  document.querySelector(".top-buttons").style.display="flex";
 
   moveIndicator(document.querySelectorAll(".tab-icon-btn")[0]);
 }
@@ -1314,44 +1251,25 @@ function openActions(){
 
   moveIndicator(document.querySelectorAll(".tab-icon-btn")[1]);
 
-  document.querySelector(".header").style.display = "none";
-  document.querySelector(".main").style.display = "none";
+  document.getElementById("actionsScreen").classList.add("active");
 
-  const screen = document.getElementById("actionsScreen");
-
-  screen.style.display = "block";   // 🔥 ESTA LÍNEA FALTABA
-  screen.classList.add("active");
-
-  document.querySelector(".top-buttons").style.display = "none";
+  document.querySelector(".top-buttons").style.display="none";
 
   const tarjetaSeleccionada =
     document.querySelectorAll(".card")[selectedCardIndex];
 
   document.getElementById("cardPreviewContainer").innerHTML =
     tarjetaSeleccionada.outerHTML;
-
-  const previewCard =
-    document.querySelector("#cardPreviewContainer .card");
-
-  previewCard.style.transform = "scale(1.05)";
-  previewCard.style.margin = "0 auto";
 }
 
 function volverHome(){
 
-  const screen = document.getElementById("actionsScreen");
+  document.getElementById("actionsScreen").classList.remove("active");
 
-  screen.classList.remove("active");
+  document.querySelector(".top-buttons").style.display="flex";
 
-  setTimeout(()=>{
-    screen.style.display = "none"; // 🔥 ocultar después del slide
-  }, 400);
-
-  document.querySelector(".header").style.display = "block";
-  document.querySelector(".main").style.display = "flex";
-  document.querySelector(".top-buttons").style.display = "flex";
-
-  moveIndicator(document.querySelectorAll(".tab-icon-btn")[2]);
+  moveIndicator(document.querySelectorAll(".tab-icon-btn")[0]);
+}
   
 function runUSSD(code){
   window.location.href = "tel:" + encodeURIComponent(code);
