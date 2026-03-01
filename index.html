@@ -925,6 +925,22 @@ body.dark .ios-list{
   opacity:1;
 }
 
+#settingsScreen{
+  min-height:100vh;
+  padding:25px 20px 120px 20px;
+  background: var(--bg);
+  color: var(--text);
+  transition: background .3s ease, color .3s ease;
+  box-sizing:border-box;
+
+  transform: translateX(100%);
+}
+
+#settingsScreen.active{
+  transform: translateX(0);
+  transition: transform .4s cubic-bezier(.25,.8,.25,1);
+}
+
 @keyframes liquidDrop {
   0%{
     transform: scale(1) translateY(0);
@@ -1112,27 +1128,46 @@ body.dark .ios-list{
 <!-- MODAL AJUSTES -->
 <!-- ========================= -->
 
-<div class="modal" id="settingsModal">
-  <div class="modal-content settings">
-<button class="close-modal" onclick="closeSettings()">✕</button>
-    <h2 data-i18n="settingsTitle">Ajustes</h2>
+<div id="settingsScreen" style="display:none;">
 
-    <!-- MODO OSCURO -->
-    <div class="setting-row">
+  <div style="
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    margin-bottom:25px;
+  ">
+    <button onclick="volverDesdeSettings()" 
+      style="
+        position:absolute;
+        left:0;
+        background:none;
+        border:none;
+        font-size:22px;
+        color:var(--text);
+    ">
+      ←
+    </button>
+
+    <h2 style="margin:0;" data-i18n="settingsTitle">Ajustes</h2>
+  </div>
+
+  <div class="ios-list">
+
+    <div class="ios-item">
       <span data-i18n="darkMode">Modo Oscuro</span>
-      <label class="switch">
-        <input type="checkbox" id="darkToggle">
+      <label class="switch" style="float:right;">
+        <input type="checkbox" id="darkToggleScreen">
         <span class="slider"></span>
       </label>
     </div>
 
-    <!-- IDIOMA -->
-    <div class="setting-row">
+    <div class="ios-item">
       <span data-i18n="language">Idioma</span>
-      <button id="languageBtn">Español</button>
+      <button id="languageBtnScreen" style="float:right;">Español</button>
     </div>
 
-    <div class="language-options" id="languageOptions">
+    <div class="language-options" id="languageOptionsScreen">
       <button onclick="setLanguage('es')">Español</button>
       <button onclick="setLanguage('en')">English</button>
     </div>
@@ -1142,7 +1177,9 @@ body.dark .ios-list{
     </div>
 
   </div>
+
 </div>
+    
 
 <!-- ========================= -->
 <!-- MODAL ACCIONES -->
@@ -1199,11 +1236,55 @@ function closeModal(){
 }
 
 function openSettings(){
-  document.getElementById("settingsModal").classList.add("show");
+
+  moveIndicator(document.querySelectorAll(".tab-icon-btn")[2]);
+
+  document.querySelector(".header").style.display = "none";
+  document.querySelector(".main").style.display = "none";
+  document.getElementById("actionsScreen").style.display = "none";
+
+  const screen = document.getElementById("settingsScreen");
+
+  screen.style.display = "block";
+
+  setTimeout(()=>{
+    screen.classList.add("active");
+  },10);
+
+  document.querySelector(".top-buttons").style.display = "none";
+
+  const darkToggle = document.getElementById("darkToggleScreen");
+
+  darkToggle.checked = document.body.classList.contains("dark");
+
+  darkToggle.onchange = function(){
+    document.body.classList.toggle("dark", this.checked);
+    localStorage.setItem("theme", this.checked ? "dark" : "light");
+  };
+
+  const btn = document.getElementById("languageBtnScreen");
+  const box = document.getElementById("languageOptionsScreen");
+
+  btn.onclick = function(){
+    box.style.display = box.style.display === "flex" ? "none" : "flex";
+  };
 }
 
-function closeSettings(){
-  document.getElementById("settingsModal").classList.remove("show");
+function volverDesdeSettings(){
+
+  const screen = document.getElementById("settingsScreen");
+
+  screen.classList.remove("active");
+
+  setTimeout(()=>{
+    screen.style.display = "none";
+  },400);
+
+  document.querySelector(".header").style.display = "block";
+  document.querySelector(".main").style.display = "flex";
+  document.querySelector(".top-buttons").style.display = "flex";
+
+  moveIndicator(document.querySelectorAll(".tab-icon-btn")[0]);
 }
 
 function openActions(){
@@ -1699,6 +1780,37 @@ actionsScreen.addEventListener("touchend", () => {
   isSwiping = false;
 });
 
+const settingsScreen = document.getElementById("settingsScreen");
+
+settingsScreen.addEventListener("touchstart", (e) => {
+  startX = e.touches[0].clientX;
+  isSwiping = startX < 40;
+});
+
+settingsScreen.addEventListener("touchmove", (e) => {
+  if(!isSwiping) return;
+
+  currentX = e.touches[0].clientX;
+  let diff = currentX - startX;
+
+  if(diff > 0){
+    settingsScreen.style.transform = `translateX(${diff}px)`;
+  }
+});
+
+settingsScreen.addEventListener("touchend", () => {
+  if(!isSwiping) return;
+
+  let diff = currentX - startX;
+
+  if(diff > 120){
+    volverDesdeSettings();
+  } else {
+    settingsScreen.style.transform = "";
+  }
+
+  isSwiping = false;
+});
 
 </script>
 
