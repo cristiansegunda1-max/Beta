@@ -1017,7 +1017,7 @@ body.no-scroll{
   
   <div class="tab-indicator"></div>
   
-<div class="tab-icon-btn active" onclick="openModal()">
+<div class="tab-icon-btn active">
     <img src="agregar.PNG">
   </div>
 
@@ -1315,9 +1315,9 @@ function volverDesdeSettings(){
   screen.scrollTop = 0;
 
   document.querySelector(".top-buttons").style.display="flex";
- 
+
   document.body.classList.remove("no-scroll");
-document.body.classList.add("actions-open");
+  document.body.classList.remove("actions-open"); // 🔥 IMPORTANTE
 
   moveIndicator(document.querySelectorAll(".tab-icon-btn")[0]);
 }
@@ -1333,8 +1333,11 @@ function openActions(){
   
   moveIndicator(document.querySelectorAll(".tab-icon-btn")[1]);
 
-  const tarjeta =
-  document.querySelectorAll(".card")[selectedCardIndex];
+  const cards = document.querySelectorAll(".card");
+
+if(!cards[selectedCardIndex]) return;
+
+const tarjeta = cards[selectedCardIndex];
 
 // 🔥 CENTRAR TARJETA PRIMERO
 tarjeta.scrollIntoView({
@@ -1378,14 +1381,14 @@ tarjeta.scrollIntoView({
 previewContainer.innerHTML = "";
 
 const selectedCard = document.querySelectorAll(".card")[selectedCardIndex];
-previewContainer.appendChild(selectedCard.cloneNode(true));
 
+const cloneCard = selectedCard.cloneNode(true);
 
-    liquidLayer.innerHTML="";
-    document.getElementById("actionsScreen").classList.add("active");
+// 🔥 eliminar botones dentro del preview
+const actions = cloneCard.querySelector(".card-actions");
+if(actions) actions.remove();
 
-  },500);
-}
+previewContainer.appendChild(cloneCard);
 
 function volverHome(){
 
@@ -1553,7 +1556,6 @@ function renderCards(){
     card.classList.add("card");
     card.addEventListener("click", function(e){
 
-  // Evita que se active si tocó editar o eliminar
   if(e.target.tagName === "BUTTON") return;
 
   selectedCardIndex = index;
@@ -1563,6 +1565,10 @@ function renderCards(){
   });
 
   card.style.outline = "3px solid #ffffff";
+
+  // 🔥 NUEVO: auto abrir actions (opcional pero recomendado)
+  // openActions();
+
 });
 
     /* ===== 1️⃣ GRADIENTE DINÁMICO SEGÚN MONEDA ===== */
