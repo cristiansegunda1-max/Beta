@@ -906,7 +906,7 @@ body.dark .ios-list{
   position:fixed;
   inset:0;
   padding:25px 20px 120px 20px;
-  background:rgba(255,255,255,0.65);
+  background: var(--bg);
 backdrop-filter:blur(40px);
 -webkit-backdrop-filter:blur(40px);
   color:var(--text);
@@ -1005,6 +1005,11 @@ body.no-scroll{
   inset:0;
   pointer-events:none;
   z-index:999;
+}
+
+.hidden-ui{
+  opacity:0;
+  pointer-events:none;
 }
 
 </style>
@@ -1295,7 +1300,7 @@ function openSettings(){
   document.getElementById("settingsScreen").classList.add("active");
 document.body.classList.add("no-scroll");
 
-  document.querySelector(".top-buttons").style.display="none";
+  document.querySelector(".top-buttons").classList.add("hidden-ui");
 
   const darkToggle = document.getElementById("darkToggleScreen");
 
@@ -1314,7 +1319,7 @@ function volverDesdeSettings(){
   screen.classList.remove("active");
   screen.scrollTop = 0;
 
-  document.querySelector(".top-buttons").style.display="flex";
+  document.querySelector(".top-buttons").classList.remove("hidden-ui");
 
   document.body.classList.remove("no-scroll");
   document.body.classList.remove("actions-open"); // 🔥 IMPORTANTE
@@ -1389,8 +1394,9 @@ const actions = cloneCard.querySelector(".card-actions");
 if(actions) actions.remove();
 
 previewContainer.appendChild(cloneCard);
+}
 
-function volverHome(){
+  function volverHome(){
 
   const tarjeta =
     document.querySelectorAll(".card")[selectedCardIndex];
@@ -1419,7 +1425,6 @@ function volverHome(){
 
   // 🔥 QUITAMOS PANTALLA
   actionsScreen.style.transition = "";
-actionsScreen.style.transform = "translateX(100%)";
 actionsScreen.classList.remove("active");
   document.body.classList.remove("no-scroll");
   document.body.classList.remove("actions-open");
@@ -1743,7 +1748,7 @@ window.addEventListener("load", updateCardEffects);
 window.addEventListener("resize", updateCardEffects);
 window.addEventListener("load", function(){
   const savedTheme = localStorage.getItem("theme");
-  const darkToggle = document.getElementById("darkToggle");
+  const darkToggle = document.getElementById("darkToggleScreen");
 
   if(savedTheme === "dark"){
     document.body.classList.add("dark");
