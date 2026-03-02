@@ -833,17 +833,22 @@ body.dark #actionsModal button{
 
 /* ESTILO GENERAL */
 .quick-btn{
-  height:95px;
-  border-radius:22px;
+  height:90px;
+  border-radius:50px;
+
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:8px;
-  font-size:14px;
-  font-weight:500;
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
+
+  gap:6px;
+
+  font-size:13px;
+  font-weight:600;
+
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+
   transition: all .25s ease;
 }
 
@@ -901,7 +906,9 @@ body.dark .ios-list{
   position:fixed;
   inset:0;
   padding:25px 20px 120px 20px;
-  background:var(--bg);
+  background:rgba(255,255,255,0.65);
+backdrop-filter:blur(40px);
+-webkit-backdrop-filter:blur(40px);
   color:var(--text);
   box-sizing:border-box;
 
@@ -910,6 +917,10 @@ body.dark .ios-list{
   overflow-y:auto;
 
   z-index:200;
+}
+
+body.dark .screen{
+  background:rgba(20,20,25,0.75);
 }
 
 .screen.active{
@@ -1303,6 +1314,7 @@ function volverDesdeSettings(){
 
 function openActions(){
 
+moveIndicator(document.querySelectorAll(".tab-icon-btn")[1]);
   if(selectedCardIndex === null){
     alert("Selecciona una tarjeta primero");
     return;
@@ -1380,8 +1392,12 @@ function volverHome(){
   liquidLayer.innerHTML="";
   liquidLayer.appendChild(clone);
 
-  document.getElementById("actionsScreen")
-    .classList.remove("active");
+  const actionsScreen = document.getElementById("actionsScreen");
+
+  // 🔥 QUITAMOS PANTALLA
+  actionsScreen.classList.remove("active");
+  actionsScreen.style.transform = "";
+  document.body.classList.remove("no-scroll");
 
   requestAnimationFrame(()=>{
 
@@ -1395,7 +1411,7 @@ function volverHome(){
 
   setTimeout(()=>{
     liquidLayer.innerHTML="";
-    document.body.classList.remove("no-scroll");
+    moveIndicator(document.querySelectorAll(".tab-icon-btn")[0]);
   },500);
 }
   
@@ -1833,7 +1849,7 @@ actionsScreen.addEventListener("touchend", () => {
   if(diff > 120){
     volverHome();
   } else {
-    actionsScreen.style.transform = "";
+    actionsScreen.style.transform = "translateX(0)";
   }
 
   isSwiping = false;
