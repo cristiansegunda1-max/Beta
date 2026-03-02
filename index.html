@@ -944,6 +944,49 @@ body.dark .ios-list{
   animation: liquidDrop .5s cubic-bezier(.22,1,.36,1) forwards;
 }
 
+body.no-scroll{
+  overflow:hidden;
+  height:100vh;
+}
+
+/* ========================== */
+/* iOS STACK NAVIGATION STYLE */
+/* ========================== */
+
+.stack-container{
+  position:relative;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+.stack-view{
+  position:absolute;
+  inset:0;
+  background:var(--bg);
+  transition: transform .45s cubic-bezier(.32, .72, 0, 1),
+              opacity .3s ease;
+  transform:translateX(100%);
+  opacity:0;
+}
+
+.stack-view.active{
+  transform:translateX(0);
+  opacity:1;
+}
+
+.stack-view.previous{
+  transform:translateX(-30%);
+  opacity:.7;
+}
+
+#liquidLayer{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:999;
+}
+
 </style>
 </head>
 
@@ -974,6 +1017,10 @@ body.dark .ios-list{
 </div>
 
 <div id="actionsScreen" class="screen">
+  
+  <div id="actionsStack" class="stack-container">
+
+  <div class="stack-view active" id="actionsMainView">
 
   <!-- Header -->
  <div style="
@@ -1183,6 +1230,8 @@ body.dark .ios-list{
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <script>
+
+let viewStack = [];
 let tarjetas = JSON.parse(localStorage.getItem("tarjetas")) || [];
 let editingIndex = null;
 let selectedCardIndex = null;
@@ -1217,6 +1266,7 @@ function openSettings(){
   moveIndicator(document.querySelectorAll(".tab-icon-btn")[2]);
 
   document.getElementById("settingsScreen").classList.add("active");
+document.body.classList.add("no-scroll");
 
   document.querySelector(".top-buttons").style.display="none";
 
@@ -1249,26 +1299,88 @@ function openActions(){
     return;
   }
 
-  moveIndicator(document.querySelectorAll(".tab-icon-btn")[1]);
-
-  document.getElementById("actionsScreen").classList.add("active");
-
-  document.querySelector(".top-buttons").style.display="none";
-
-  const tarjetaSeleccionada =
+  const tarjeta =
     document.querySelectorAll(".card")[selectedCardIndex];
 
-  document.getElementById("cardPreviewContainer").innerHTML =
-    tarjetaSeleccionada.outerHTML;
+  const rect = tarjeta.getBoundingClientRect();
+
+  const clone = tarjeta.cloneNode(true);
+
+  clone.style.position="fixed";
+  clone.style.top = rect.top + "px";
+  clone.style.left = rect.left + "px";
+  clone.style.width = rect.width + "px";
+  clone.style.height = rect.height + "px";
+  clone.style.margin="0";
+  clone.style.transition="all .5s cubic-bezier(.32,.72,0,1)";
+  clone.style.zIndex="1000";
+
+  const liquidLayer = document.getElementById("liquidLayer");
+  liquidLayer.innerHTML="";
+  liquidLayer.appendChild(clone);
+
+  document.body.classList.add("no-scroll");
+
+  requestAnimationFrame(()=>{
+
+    clone.style.top="0px";
+    clone.style.left="0px";
+    clone.style.width="100%";
+    clone.style.height="100%";
+    clone.style.borderRadius="0px";
+
+  });
+
+  setTimeout(()=>{
+
+    liquidLayer.innerHTML="";
+    document.getElementById("actionsScreen").classList.add("active");
+
+  },500);
 }
 
 function volverHome(){
 
-  document.getElementById("actionsScreen").classList.remove("active");
+  const tarjeta =
+    document.querySelectorAll(".card")[selectedCardIndex];
 
-  document.querySelector(".top-buttons").style.display="flex";
+  const rect = tarjeta.getBoundingClientRect();
 
-  moveIndicator(document.querySelectorAll(".tab-icon-btn")[0]);
+  const preview =
+    document.querySelector("#cardPreviewContainer .card");
+
+  const clone = preview.cloneNode(true);
+
+  clone.style.position="fixed";
+  clone.style.top="0px";
+  clone.style.left="0px";
+  clone.style.width="100%";
+  clone.style.height="100%";
+  clone.style.margin="0";
+  clone.style.transition="all .5s cubic-bezier(.32,.72,0,1)";
+  clone.style.zIndex="1000";
+
+  const liquidLayer = document.getElementById("liquidLayer");
+  liquidLayer.innerHTML="";
+  liquidLayer.appendChild(clone);
+
+  document.getElementById("actionsScreen")
+    .classList.remove("active");
+
+  requestAnimationFrame(()=>{
+
+    clone.style.top = rect.top + "px";
+    clone.style.left = rect.left + "px";
+    clone.style.width = rect.width + "px";
+    clone.style.height = rect.height + "px";
+    clone.style.borderRadius="22px";
+
+  });
+
+  setTimeout(()=>{
+    liquidLayer.innerHTML="";
+    document.body.classList.remove("no-scroll");
+  },500);
 }
   
 function runUSSD(code){
@@ -1748,7 +1860,38 @@ settingsScreen.addEventListener("touchend", () => {
   isSwiping = false;
 });
 
+function pushView(newView){
+
+  const currentView = document.querySelector(".stack-view.active");
+
+  if(currentView){
+    currentView.classList.remove("active");
+    currentView.classList.add("previous");
+    viewStack.push(currentView);
+  }
+
+  newView.classList.add("active");
+}
+
+function popView(){
+
+  const currentView = document.querySelector(".stack-view.active");
+
+  if(currentView){
+    currentView.classList.remove("active");
+    currentView.style.transform = "translateX(100%)";
+  }
+
+  const previousView = viewStack.pop();
+
+  if(previousView){
+    previousView.classList.remove("previous");
+    previousView.classList.add("active");
+  }
+}
+
 </script>
 
+<div id="liquidLayer"></div>
 </body>
 </html>
