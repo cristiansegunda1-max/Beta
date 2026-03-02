@@ -927,6 +927,15 @@ body.dark .screen{
   transform:translateX(0);
 }
 
+body.actions-open .header,
+body.actions-open .main{
+  display:none;
+}
+
+body.actions-open .top-buttons{
+  display:none;
+}
+
 @keyframes liquidDrop {
   0%{
     transform: scale(1) translateY(0);
@@ -1308,6 +1317,7 @@ function volverDesdeSettings(){
   document.querySelector(".top-buttons").style.display="flex";
  
   document.body.classList.remove("no-scroll");
+document.body.classList.add("actions-open");
 
   moveIndicator(document.querySelectorAll(".tab-icon-btn")[0]);
 }
@@ -1398,7 +1408,8 @@ function volverHome(){
   actionsScreen.classList.remove("active");
   actionsScreen.style.transform = "";
   document.body.classList.remove("no-scroll");
-
+  document.body.classList.remove("actions-open");
+  
   requestAnimationFrame(()=>{
 
     clone.style.top = rect.top + "px";
