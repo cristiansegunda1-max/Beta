@@ -1119,11 +1119,12 @@ body.no-scroll{
       Información Tarjeta Red
     </div>
 
+ 
+    </div> <!-- cierre ios-list -->
+
   </div> <!-- cierre stack-view -->
-</div> <!-- cierre stack-container -->
+  </div> <!-- cierre stack-container -->
 </div> <!-- cierre actionsScreen -->
-
-
 
 
 <div id="cardModal" class="modal">
@@ -1206,9 +1207,7 @@ body.no-scroll{
   CM "55384064" Company
 </div>
 
-  </div>
-
-</div>
+</div> <!-- cierre settingsScreen -->
     
 
 <!-- ========================= -->
@@ -1261,10 +1260,12 @@ function toggleTheme(){
 
 function openModal(){
   document.getElementById("cardModal").classList.add("show");
+  document.body.classList.add("modal-open");
 }
 
 function closeModal(){
   document.getElementById("cardModal").classList.remove("show");
+  document.body.classList.remove("modal-open");
 }
 
 function openSettings(){
@@ -1694,22 +1695,8 @@ blurBg.style.backdropFilter = `blur(${blurAmount}px)`;
 blurBg.style.webkitBackdropFilter = `blur(${blurAmount}px)`;
 }
 
-cardsContainer.addEventListener("scroll", updateCardEffects);
 window.addEventListener("load", updateCardEffects);
 window.addEventListener("resize", updateCardEffects);
-
-document.addEventListener("DOMContentLoaded", function(){
-  const darkToggle = document.getElementById("darkToggle");
-
-  if(darkToggle){
-    darkToggle.addEventListener("change", function(){
-      document.body.classList.toggle("dark", this.checked);
-      localStorage.setItem("theme", this.checked ? "dark" : "light");
-      syncThemeIcon();
-    });
-  }
-});
-
 window.addEventListener("load", function(){
   const savedTheme = localStorage.getItem("theme");
   const darkToggle = document.getElementById("darkToggle");
