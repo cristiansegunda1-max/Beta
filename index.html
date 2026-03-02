@@ -1021,7 +1021,7 @@ body.no-scroll{
     <img src="agregar.PNG">
   </div>
 
-<div class="tab-icon-btn" onclick="openActions()">
+<div class="tab-icon-btn">
   <img src="acciones.PNG">
 </div>
 
@@ -1323,6 +1323,8 @@ document.body.classList.add("actions-open");
 }
 
 function openActions(){
+  
+  document.body.classList.add("actions-open");
 
 moveIndicator(document.querySelectorAll(".tab-icon-btn")[1]);
   if(selectedCardIndex === null){
@@ -1331,7 +1333,14 @@ moveIndicator(document.querySelectorAll(".tab-icon-btn")[1]);
   }
 
   const tarjeta =
-    document.querySelectorAll(".card")[selectedCardIndex];
+  document.querySelectorAll(".card")[selectedCardIndex];
+
+// 🔥 CENTRAR TARJETA PRIMERO
+tarjeta.scrollIntoView({
+  behavior: "instant",
+  inline: "center",
+  block: "nearest"
+});
 
   const rect = tarjeta.getBoundingClientRect();
 
@@ -1405,8 +1414,9 @@ function volverHome(){
   const actionsScreen = document.getElementById("actionsScreen");
 
   // 🔥 QUITAMOS PANTALLA
-  actionsScreen.classList.remove("active");
-  actionsScreen.style.transform = "";
+  actionsScreen.style.transition = "";
+actionsScreen.style.transform = "translateX(100%)";
+actionsScreen.classList.remove("active");
   document.body.classList.remove("no-scroll");
   document.body.classList.remove("actions-open");
   
@@ -1804,18 +1814,28 @@ function moveIndicator(element){
 tabButtonsNew.forEach((btn, index)=>{
   btn.addEventListener("click", function(){
 
-    // Si es botón acciones y no hay tarjeta seleccionada
-    if(index === 1 && selectedCardIndex === null){
-      alert("Selecciona una tarjeta primero");
+    if(index === 0){
+      openModal();
+      moveIndicator(this);
       return;
     }
 
-    indicator.style.transform = "scaleX(1.3)";
-    moveIndicator(this);
+    if(index === 1){
+      if(selectedCardIndex === null){
+        alert("Selecciona una tarjeta primero");
+        return;
+      }
 
-    setTimeout(()=>{
-      indicator.style.transform = "scaleX(1)";
-    },150);
+      openActions();
+      moveIndicator(this);
+      return;
+    }
+
+    if(index === 2){
+      openSettings();
+      moveIndicator(this);
+      return;
+    }
 
   });
 });
