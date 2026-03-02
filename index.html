@@ -225,7 +225,7 @@ body.dark .modal-actions button:first-child{
   bottom: 22px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 100;
+  z-index: 5000;
 
   height: 74px;
   width: 340px;
@@ -991,6 +991,10 @@ body.no-scroll{
 </head>
 
 <body>
+  
+
+  
+  
 
 <div class="top-buttons">
   <div class="qr-btn" onclick="generarQR()"></div>
@@ -1101,23 +1105,7 @@ body.no-scroll{
 
 </div>
 
-<div class="tabbar">
-  
-  <div class="tab-indicator"></div>
-  
-<div class="tab-icon-btn active" onclick="openModal()">
-    <img src="agregar.PNG">
-  </div>
 
-<div class="tab-icon-btn" onclick="openActions()">
-  <img src="acciones.PNG">
-</div>
-
-<div class="tab-icon-btn" onclick="openSettings()">
-  <img src="ajustes.PNG">
-</div>
-
-</div> <!-- CIERRE DE TABBAR -->
 
 
 <div id="cardModal" class="modal">
@@ -1288,6 +1276,8 @@ function volverDesdeSettings(){
   screen.scrollTop = 0;
 
   document.querySelector(".top-buttons").style.display="flex";
+ 
+  document.body.classList.remove("no-scroll");
 
   moveIndicator(document.querySelectorAll(".tab-icon-btn")[0]);
 }
@@ -1772,8 +1762,14 @@ function moveIndicator(element){
   element.classList.add("active");
 }
 
-tabButtonsNew.forEach(btn=>{
+tabButtonsNew.forEach((btn, index)=>{
   btn.addEventListener("click", function(){
+
+    // Si es botón acciones y no hay tarjeta seleccionada
+    if(index === 1 && selectedCardIndex === null){
+      alert("Selecciona una tarjeta primero");
+      return;
+    }
 
     indicator.style.transform = "scaleX(1.3)";
     moveIndicator(this);
@@ -1892,6 +1888,25 @@ function popView(){
 
 </script>
 
-<div id="liquidLayer"></div>
+div class="tabbar">
+  
+  <div class="tab-indicator"></div>
+  
+<div class="tab-icon-btn active" onclick="openModal()">
+    <img src="agregar.PNG">
+  </div>
+
+<div class="tab-icon-btn" onclick="openActions()">
+  <img src="acciones.PNG">
+</div>
+
+<div class="tab-icon-btn" onclick="openSettings()">
+  <img src="ajustes.PNG">
+</div>
+
+</div> <!-- CIERRE DE TABBAR -->
+
+  <div id="liquidLayer"></div>
+  
 </body>
 </html>
